@@ -3,6 +3,7 @@ package mcjty.gearswap.proxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import mcjty.gearswap.ModRenderers;
 
 public class ClientProxy extends CommonProxy {
 
@@ -14,7 +15,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void init(FMLInitializationEvent e) {
         super.init(e);
-//        ModRenderers.init();
+        ModRenderers.init();
 //        MinecraftForge.EVENT_BUS.register(this);
 //        FMLCommonHandler.instance().bus().register(new KeyInputHandler());
 //        KeyBindings.init();

@@ -20,11 +20,11 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.List;
 
-public class GearSwapper extends Block implements ITileEntityProvider {
+public class GearSwapperBlock extends Block implements ITileEntityProvider {
     private IIcon iconFront;
     private IIcon iconSide;
 
-    public GearSwapper() {
+    public GearSwapperBlock() {
         super(Material.wood);
         setBlockName("gearSwapper");
         setBlockTextureName(GearSwap.MODID + ":gearSwapper");
@@ -55,7 +55,6 @@ public class GearSwapper extends Block implements ITileEntityProvider {
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
         iconFront = iconRegister.registerIcon(GearSwap.MODID + ":gearSwapperFront");
-//        side = iconRegister.registerIcon(GearSwap.MODID + ":gearSwapperSide");
         iconSide = iconRegister.registerIcon("minecraft:planks_oak");
     }
 

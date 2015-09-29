@@ -8,17 +8,17 @@ import net.minecraft.item.ItemStack;
 import java.util.List;
 
 public class GearSwapperItemBlock extends ItemBlock {
-    private final GearSwapper gearSwapper;
+    private final GearSwapperBlock gearSwapperBlock;
 
     public GearSwapperItemBlock(Block block) {
         super(block);
-        gearSwapper = (GearSwapper) block;
+        gearSwapperBlock = (GearSwapperBlock) block;
     }
 
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        gearSwapper.addInformation(itemStack, player, list, whatIsThis);
+        gearSwapperBlock.addInformation(itemStack, player, list, whatIsThis);
     }
 
 }
