@@ -7,11 +7,12 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mcjty.gearswap.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Logger;
-import romelo333.notenoughwands.proxy.CommonProxy;
 
 import java.io.File;
 
@@ -19,12 +20,12 @@ import java.io.File;
         "required-after:Forge@["+ GearSwap.MIN_FORGE_VER+",)",
         version = GearSwap.VERSION)
 public class GearSwap {
-    public static final String MODID = "NotEnoughWands";
-    public static final String VERSION = "1.1.2";
+    public static final String MODID = "gearswap";
+    public static final String VERSION = "0.1.0";
     public static final String MIN_FORGE_VER = "10.13.2.1291";
 
-//    @SidedProxy(clientSide="romelo333.notenoughwands.proxy.ClientProxy", serverSide="romelo333.notenoughwands.proxy.ServerProxy")
-//    public static CommonProxy proxy;
+    @SidedProxy(clientSide="mcjty.gearswap.proxy.ClientProxy", serverSide="mcjty.gearswap.proxy.ServerProxy")
+    public static CommonProxy proxy;
 
     @Mod.Instance("gearswap")
     public static GearSwap instance;
@@ -32,14 +33,6 @@ public class GearSwap {
     public static File mainConfigDir;
     public static File modConfigDir;
     public static Configuration config;
-
-    public static CreativeTabs tabNew = new CreativeTabs("GearSw") {
-        @Override
-        @SideOnly(Side.CLIENT)
-        public Item getTabIconItem() {
-            return ModItems.teleportationWand;
-        }
-    };
 
     /**
      * Run before anything else. Read your config, create blocks, items, etc, and
@@ -50,7 +43,7 @@ public class GearSwap {
         logger = e.getModLog();
         mainConfigDir = e.getModConfigurationDirectory();
         modConfigDir = new File(mainConfigDir.getPath());
-        config = new Configuration(new File(modConfigDir, "notenoughwands.cfg"));
+        config = new Configuration(new File(modConfigDir, "gearswap.cfg"));
         proxy.preInit(e);
 
 //        FMLInterModComms.sendMessage("Waila", "register", "mcjty.wailasupport.WailaCompatibility.load");
