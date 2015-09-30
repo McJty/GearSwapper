@@ -57,18 +57,18 @@ public class GearSwapperTESR extends TileEntitySpecialRenderer {
 
         GearSwapperTE gearSwapperTE = (GearSwapperTE) tileEntity;
 
-        renderSlots();
+        renderSlots(gearSwapperTE);
 
         GL11.glPopMatrix();
     }
 
-    private void renderSlots() {
+    private void renderSlots(GearSwapperTE gearSwapperTE) {
         GL11.glTranslatef(0.0F, 0.0F, 0.9F);
 
         RenderHelper.enableGUIStandardItemLighting();
         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-        GL11.glDepthMask(true);
+        GL11.glDepthMask(false);
 
         boolean lighting = GL11.glIsEnabled(GL11.GL_LIGHTING);
         if (!lighting) {
@@ -87,11 +87,23 @@ public class GearSwapperTESR extends TileEntitySpecialRenderer {
         FontRenderer fontRenderer = this.func_147498_b();
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
 
-        itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, new ItemStack(Items.diamond_axe), 10, 7);
-        itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, new ItemStack(Items.golden_sword), 40, 7);
+        ItemStack stack0 = gearSwapperTE.getItemStack(0);
+        if (stack0 != null) {
+            itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, stack0, 10, 9);
+        }
+        ItemStack stack1 = gearSwapperTE.getItemStack(1);
+        if (stack1 != null) {
+            itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, stack1, 40, 9);
+        }
 
-        itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, new ItemStack(Items.iron_boots), 10, 35);
-        itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, new ItemStack(Items.golden_apple), 40, 35);
+        ItemStack stack2 = gearSwapperTE.getItemStack(2);
+        if (stack2 != null) {
+            itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, stack2, 10, 39);
+        }
+        ItemStack stack3 = gearSwapperTE.getItemStack(3);
+        if (stack3 != null) {
+            itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, stack3, 40, 39);
+        }
 
         if (!lighting) {
             GL11.glDisable(GL11.GL_LIGHTING);

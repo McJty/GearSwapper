@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -19,6 +20,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static net.minecraftforge.common.util.ForgeDirection.DOWN;
@@ -62,11 +64,77 @@ public class GearSwapperBlock extends Block implements ITileEntityProvider {
     }
 
     @Override
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sx, float sy, float sz) {
+        if (!world.isRemote) {
+            ForgeDirection k = getOrientation(world, x, y, z);
+            if (side == k.ordinal()) {
+                TileEntity tileEntity = world.getTileEntity(x, y, z);
+                if (tileEntity instanceof GearSwapperTE) {
+                    GearSwapperTE gearSwapperTE = (GearSwapperTE) tileEntity;
+                    int index = calculateHitIndex(sx, sy, sz, k);
+                    gearSwapperTE.setItemStack(index, player.getHeldItem());
+                }
+            }
+        }
+        return true;
+    }
+
+    private int calculateHitIndex(float sx, float sy, float sz, ForgeDirection k) {
+        int index = 0;
+        switch (k) {
+            case DOWN:
+                break;
+            case UP:
+                break;
+            case NORTH:
+                index = (sx < .5 ? 1 : 0) + (sy < .5 ? 2 : 0);
+                break;
+            case SOUTH:
+                index = (sx > .5 ? 1 : 0) + (sy < .5 ? 2 : 0);
+                break;
+            case WEST:
+                index = (sz > .5 ? 1 : 0) + (sy < .5 ? 2 : 0);
+                break;
+            case EAST:
+                index = (sz < .5 ? 1 : 0) + (sy < .5 ? 2 : 0);
+                break;
+            case UNKNOWN:
+                break;
+        }
+        return index;
+    }
+
+    @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         ForgeDirection dir = determineOrientation(x, y, z, entityLivingBase);
         int meta = world.getBlockMetadata(x, y, z);
         world.setBlockMetadataWithNotify(x, y, z, setOrientation(meta, dir), 2);
-//        restoreBlockFromNBT(world, x, y, z, itemStack);
+
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        if (tagCompound != null) {
+            TileEntity te = world.getTileEntity(x, y, z);
+            if (te instanceof GearSwapperTE) {
+                ((GearSwapperTE)te).readRestorableFromNBT(tagCompound);
+            }
+        }
+    }
+
+    @Override
+    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
+        TileEntity tileEntity = world.getTileEntity(x, y, z);
+
+        if (tileEntity instanceof GearSwapperTE) {
+            ItemStack stack = new ItemStack(Item.getItemFromBlock(this));
+            NBTTagCompound tagCompound = new NBTTagCompound();
+            ((GearSwapperTE)tileEntity).writeRestorableToNBT(tagCompound);
+
+            stack.setTagCompound(tagCompound);
+            ArrayList<ItemStack> result = new ArrayList<ItemStack>();
+            result.add(stack);
+            return result;
+        } else {
+            return super.getDrops(world, x, y, z, metadata, fortune);
+        }
     }
 
     @Override
@@ -117,14 +185,6 @@ public class GearSwapperBlock extends Block implements ITileEntityProvider {
     private static int setOrientation(int metadata, ForgeDirection orientation) {
         return (metadata & ~0x7) | orientation.ordinal();
     }
-
-    /**
-     * The type of render function that is called for this block
-     */
-//    @Override
-//    public int getRenderType() {
-//        return -1;
-//    }
 
     /**
      * If this block doesn't render as an ordinary block it will return False (examples: signs, buttons, stairs, etc)
