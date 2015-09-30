@@ -6,6 +6,7 @@ import mcjty.gearswap.GearSwap;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -14,8 +15,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -32,6 +32,8 @@ public class GearSwapperBlock extends Block implements ITileEntityProvider {
     public GearSwapperBlock() {
         super(Material.wood);
         setBlockName("gearSwapper");
+        setHardness(2.0f);
+        setHarvestLevel("pickaxe", 0);
         setBlockTextureName(GearSwap.MODID + ":gearSwapper");
         setCreativeTab(CreativeTabs.tabMisc);
     }
@@ -64,6 +66,24 @@ public class GearSwapperBlock extends Block implements ITileEntityProvider {
     }
 
     @Override
+    public void onBlockClicked(World world, int x, int y, int z, EntityPlayer player) {
+        if (!world.isRemote && player.isSneaking()) {
+            MovingObjectPosition mouseOver = Minecraft.getMinecraft().objectMouseOver;
+            ForgeDirection k = getOrientation(world, x, y, z);
+            if (mouseOver.sideHit == k.ordinal()) {
+                float sx = (float) (mouseOver.hitVec.xCoord - x);
+                float sy = (float) (mouseOver.hitVec.yCoord - y);
+                float sz = (float) (mouseOver.hitVec.zCoord - z);
+                int index = calculateHitIndex(sx, sy, sz, k);
+                GearSwapperTE gearSwapperTE = (GearSwapperTE) world.getTileEntity(x, y, z);
+                gearSwapperTE.rememberSetup(index, player);
+                player.addChatComponentMessage(new ChatComponentText(EnumChatFormatting.YELLOW + "Remembered current hotbar and armor"));
+            }
+        }
+    }
+
+
+    @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sx, float sy, float sz) {
         if (!world.isRemote) {
             ForgeDirection k = getOrientation(world, x, y, z);
@@ -72,7 +92,9 @@ public class GearSwapperBlock extends Block implements ITileEntityProvider {
                 if (tileEntity instanceof GearSwapperTE) {
                     GearSwapperTE gearSwapperTE = (GearSwapperTE) tileEntity;
                     int index = calculateHitIndex(sx, sy, sz, k);
-                    gearSwapperTE.setItemStack(index, player.getHeldItem());
+
+                    gearSwapperTE.restoreSetup(index, player);
+                    player.addChatComponentMessage(new ChatComponentText(EnumChatFormatting.YELLOW + "Restored hotbar and armor"));
                 }
             }
         }
