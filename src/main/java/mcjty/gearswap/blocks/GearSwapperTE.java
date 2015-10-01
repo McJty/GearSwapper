@@ -198,8 +198,8 @@ public class GearSwapperTE extends TileEntity implements IInventory {
         return stacks[index];
     }
 
-    private boolean isGhostSlot(int index) {
-        return index < (4 + 4 * (9+4));
+    public boolean isGhostSlot(int index) {
+        return index >= 0 && index < (4 + 4 * (9+4));
     }
 
     @Override
@@ -264,9 +264,8 @@ public class GearSwapperTE extends TileEntity implements IInventory {
             if (stack != null && stack.stackSize > getInventoryStackLimit()) {
                 stack.stackSize = getInventoryStackLimit();
             }
-            markDirty();
         }
-
+        markDirty();
     }
 
     @Override

@@ -4,10 +4,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 
 public class GearSwapperContainer extends Container {
     private IInventory playerInventory;
-    private IInventory gearInventory;
+    private GearSwapperTE gearInventory;
 
     public GearSwapperContainer(EntityPlayer player, GearSwapperTE gearSwapperTE) {
         playerInventory = player.inventory;
@@ -59,5 +60,16 @@ public class GearSwapperContainer extends Container {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public ItemStack slotClick(int index, int button, int mode, EntityPlayer player) {
+        if (gearInventory.isGhostSlot(index)) {
+            Slot slot = getSlot(index);
+            if (slot.getHasStack()) {
+                slot.putStack(null);
+            }
+        }
+        return super.slotClick(index, button, mode, player);
     }
 }
