@@ -3,6 +3,7 @@ package mcjty.gearswap.proxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import mcjty.gearswap.Config;
 import mcjty.gearswap.GearSwap;
 import mcjty.gearswap.blocks.ModBlocks;
@@ -38,6 +39,7 @@ public abstract class CommonProxy {
     }
 
     public void init(FMLInitializationEvent e) {
+        NetworkRegistry.INSTANCE.registerGuiHandler(GearSwap.instance, new GuiProxy());
     }
 
     public void postInit(FMLPostInitializationEvent e) {

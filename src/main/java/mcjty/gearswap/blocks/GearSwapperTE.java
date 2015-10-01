@@ -149,7 +149,6 @@ public class GearSwapperTE extends TileEntity implements IInventory {
             }
         }
 
-        System.out.println("failedStacks = " + failedStacks.size());
         for (ItemStack stack : failedStacks) {
             inventory.addItemStackToInventory(stack);
             // Check for failure and spawn in the world?

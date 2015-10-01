@@ -91,6 +91,12 @@ public class GearSwapperBlock extends Block implements ITileEntityProvider {
                 TileEntity tileEntity = world.getTileEntity(x, y, z);
                 if (tileEntity instanceof GearSwapperTE) {
                     GearSwapperTE gearSwapperTE = (GearSwapperTE) tileEntity;
+
+                    if (sy < .1) {
+                        player.openGui(GearSwap.instance, GearSwap.GUI_GEARSWAP, world, x, y, z);
+                        return true;
+                    }
+
                     int index = calculateHitIndex(sx, sy, sz, k);
 
                     gearSwapperTE.restoreSetup(index, player);

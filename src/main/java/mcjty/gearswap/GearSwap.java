@@ -34,6 +34,8 @@ public class GearSwap {
     public static File modConfigDir;
     public static Configuration config;
 
+    public static int GUI_GEARSWAP = 0;
+
     /**
      * Run before anything else. Read your config, create blocks, items, etc, and
      * register them with the GameRegistry.
