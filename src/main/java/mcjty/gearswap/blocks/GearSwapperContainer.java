@@ -16,10 +16,10 @@ public class GearSwapperContainer extends Container {
         gearInventory = gearSwapperTE;
 
         int index = 0;
-        addSlotToContainer(new GhostSlot(gearInventory, index++, 10, 8));
-        addSlotToContainer(new GhostSlot(gearInventory, index++, 28, 47));
-        addSlotToContainer(new GhostSlot(gearInventory, index++, 10, 104));
-        addSlotToContainer(new GhostSlot(gearInventory, index++, 28, 143));
+        addSlotToContainer(new GhostSlot(gearInventory, index++, 46, 8));
+        addSlotToContainer(new GhostSlot(gearInventory, index++, 64, 47));
+        addSlotToContainer(new GhostSlot(gearInventory, index++, 46, 104));
+        addSlotToContainer(new GhostSlot(gearInventory, index++, 64, 143));
 
         for (int i = 0 ; i < 4 ; i++) {
             int x = 87;
