@@ -3,8 +3,7 @@ package mcjty.gearswap.blocks;
 import mcjty.gearswap.items.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -14,10 +13,7 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class GearSwapperTE extends TileEntity implements IInventory {
+public class GearSwapperTE extends TileEntity implements ISidedInventory {
 
     // First 4 slots are the ghost slots for the front icons
     // Next there are 4 times 9+4 slots for the remembered states.
@@ -222,18 +218,6 @@ public class GearSwapperTE extends TileEntity implements IInventory {
     }
 
 
-    private ItemStack findAndRemoveItemStack(ItemStack desired, InventoryPlayer inventory) {
-        for (int i = 0 ; i < 9*4 + 4 ; i++) {
-            ItemStack stack = inventory.getStackInSlot(i);
-            if (stack != null && desired.isItemEqual(stack)) {
-                inventory.setInventorySlotContents(i, null);
-                return stack;
-            }
-        }
-        return null;
-    }
-
-
     @Override
     public Packet getDescriptionPacket() {
         NBTTagCompound nbtTag = new NBTTagCompound();
@@ -369,5 +353,25 @@ public class GearSwapperTE extends TileEntity implements IInventory {
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         return !isGhostSlot(index);
+    }
+
+    @Override
+    public boolean canExtractItem(int index, ItemStack stack, int side) {
+        return index >= SLOT_BUFFER;
+    }
+
+    @Override
+    public int[] getAccessibleSlotsFromSide(int side) {
+        return new int[] {
+                SLOT_BUFFER, SLOT_BUFFER+1, SLOT_BUFFER+2, SLOT_BUFFER+3,
+                SLOT_BUFFER+4, SLOT_BUFFER+5, SLOT_BUFFER+6, SLOT_BUFFER+7,
+                SLOT_BUFFER+8, SLOT_BUFFER+9, SLOT_BUFFER+10, SLOT_BUFFER+11,
+                SLOT_BUFFER+12, SLOT_BUFFER+13, SLOT_BUFFER+14, SLOT_BUFFER+15
+        };
+    }
+
+    @Override
+    public boolean canInsertItem(int index, ItemStack stack, int side) {
+        return index >= SLOT_BUFFER;
     }
 }
