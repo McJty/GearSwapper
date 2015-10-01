@@ -75,7 +75,7 @@ public class GearSwapperContainer extends Container {
             Slot slot = getSlot(index);
             if (slot.getHasStack()) {
                 slot.putStack(null);
-            } else if (!gearInventory.isIconSlot(index)) {
+            } else if (!gearInventory.isIconSlot(index) && player.inventory.getItemStack() == null) {
                 slot.putStack(new ItemStack(ModItems.forceEmptyItem));
                 return null;
             }
