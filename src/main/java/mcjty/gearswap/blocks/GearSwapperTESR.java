@@ -87,20 +87,20 @@ public class GearSwapperTESR extends TileEntitySpecialRenderer {
         FontRenderer fontRenderer = this.func_147498_b();
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
 
-        ItemStack stack0 = gearSwapperTE.getItemStack(0);
+        ItemStack stack0 = gearSwapperTE.getStackInSlot(0);
         if (stack0 != null) {
             itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, stack0, 10, 9);
         }
-        ItemStack stack1 = gearSwapperTE.getItemStack(1);
+        ItemStack stack1 = gearSwapperTE.getStackInSlot(1);
         if (stack1 != null) {
             itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, stack1, 40, 9);
         }
 
-        ItemStack stack2 = gearSwapperTE.getItemStack(2);
+        ItemStack stack2 = gearSwapperTE.getStackInSlot(2);
         if (stack2 != null) {
             itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, stack2, 10, 39);
         }
-        ItemStack stack3 = gearSwapperTE.getItemStack(3);
+        ItemStack stack3 = gearSwapperTE.getStackInSlot(3);
         if (stack3 != null) {
             itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, stack3, 40, 39);
         }
