@@ -115,16 +115,16 @@ public class GearSwapperBlock extends Block implements ITileEntityProvider {
             case UP:
                 break;
             case NORTH:
-                index = (sx < .5 ? 1 : 0) + (sy < .5 ? 2 : 0);
+                index = (sx < .5 ? 1 : 0) + (sy < .54 ? 2 : 0);
                 break;
             case SOUTH:
-                index = (sx > .5 ? 1 : 0) + (sy < .5 ? 2 : 0);
+                index = (sx > .5 ? 1 : 0) + (sy < .54 ? 2 : 0);
                 break;
             case WEST:
-                index = (sz > .5 ? 1 : 0) + (sy < .5 ? 2 : 0);
+                index = (sz > .5 ? 1 : 0) + (sy < .54 ? 2 : 0);
                 break;
             case EAST:
-                index = (sz < .5 ? 1 : 0) + (sy < .5 ? 2 : 0);
+                index = (sz < .5 ? 1 : 0) + (sy < .54 ? 2 : 0);
                 break;
             case UNKNOWN:
                 break;

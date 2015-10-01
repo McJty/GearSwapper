@@ -89,20 +89,20 @@ public class GearSwapperTESR extends TileEntitySpecialRenderer {
 
         ItemStack stack0 = gearSwapperTE.getStackInSlot(0);
         if (stack0 != null) {
-            itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, stack0, 10, 9);
+            itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, stack0, 10, 8);
         }
         ItemStack stack1 = gearSwapperTE.getStackInSlot(1);
         if (stack1 != null) {
-            itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, stack1, 40, 9);
+            itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, stack1, 40, 8);
         }
 
         ItemStack stack2 = gearSwapperTE.getStackInSlot(2);
         if (stack2 != null) {
-            itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, stack2, 10, 39);
+            itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, stack2, 10, 37);
         }
         ItemStack stack3 = gearSwapperTE.getStackInSlot(3);
         if (stack3 != null) {
-            itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, stack3, 40, 39);
+            itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, stack3, 40, 37);
         }
 
         if (!lighting) {
