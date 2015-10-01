@@ -1,5 +1,6 @@
 package mcjty.gearswap.blocks;
 
+import mcjty.gearswap.items.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -68,6 +69,9 @@ public class GearSwapperContainer extends Container {
             Slot slot = getSlot(index);
             if (slot.getHasStack()) {
                 slot.putStack(null);
+            } else if (!gearInventory.isIconSlot(index)) {
+                slot.putStack(new ItemStack(ModItems.forceEmptyItem));
+                return null;
             }
         }
         return super.slotClick(index, button, mode, player);

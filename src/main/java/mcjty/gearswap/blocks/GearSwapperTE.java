@@ -1,5 +1,6 @@
 package mcjty.gearswap.blocks;
 
+import mcjty.gearswap.items.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
@@ -23,7 +24,8 @@ public class GearSwapperTE extends TileEntity implements IInventory {
     // Finally there are 16 slots general inventory.
     private ItemStack stacks[] = new ItemStack[4 + 4*(9+4) + 16];
 
-
+    public static final int SLOT_GHOST = 4;
+    public static final int SLOT_BUFFER = SLOT_GHOST + 4*(9+4);
 
 
     @Override
@@ -105,58 +107,120 @@ public class GearSwapperTE extends TileEntity implements IInventory {
 
     public void restoreSetup(int index, EntityPlayer player) {
         InventoryPlayer inventory = player.inventory;
-        ItemStack dummy = new ItemStack(Blocks.bedrock);
+
+        // Set aside the current hotbar + armor slots.
+        ItemStack[] currentStacks = new ItemStack[9+4];
         for (int i = 0 ; i < 9+4 ; i++) {
             int inventoryIndex = getInventoryIndex(i);
-            ItemStack currentStack = inventory.getStackInSlot(inventoryIndex);
-            if (currentStack == null) {
-                inventory.setInventorySlotContents(inventoryIndex, dummy);
-            }
+            currentStacks[i] = inventory.getStackInSlot(inventoryIndex);
+            inventory.setInventorySlotContents(inventoryIndex, null);
         }
 
-        List<ItemStack> failedStacks = new ArrayList<ItemStack>();
-
+        // Find stacks in all possible sources to replace the current selection
         for (int i = 0 ; i < 9+4 ; i++) {
-            int inventoryIndex = getInventoryIndex(i);
             int internalInventoryIndex = getInternalInventoryIndex(index, i);
-            ItemStack currentStack = inventory.getStackInSlot(inventoryIndex);
             ItemStack desiredStack = getStackInSlot(internalInventoryIndex);
-            if (desiredStack == null) {
-                if (currentStack != dummy) {
-                    inventory.setInventorySlotContents(inventoryIndex, dummy);
-                    if (!inventory.addItemStackToInventory(currentStack)) {
-                        failedStacks.add(currentStack);
-                    }
-                }
+            if (desiredStack == null || desiredStack.getItem() == ModItems.forceEmptyItem) {
+                // Either we don't have specific needs for this slot or we want it to be cleared.
+                // In both cases we keep the slot empty here.
             } else {
-                ItemStack realStack = findAndRemoveItemStack(desiredStack, inventory);
-                currentStack = inventory.getStackInSlot(inventoryIndex);
-                inventory.setInventorySlotContents(inventoryIndex, realStack);
-                if (currentStack != dummy && currentStack != null) {
-                    // Move this away
-                    if (!inventory.addItemStackToInventory(currentStack)) {
-                        failedStacks.add(currentStack);
+                ItemStack foundStack = findBestMatchingStack(desiredStack, currentStacks, inventory);
+                // Can be that we didn't find anything. In any csae, we simply put whatever we found in the slot.
+                int playerIndex = getInventoryIndex(i);
+                inventory.setInventorySlotContents(playerIndex, foundStack);
+            }
+        }
+
+        // First we check all slots that we don't need to be cleared and we put back the item
+        // from currentStacks if that's still there. In all other slots we temporarily set
+        // our dummy item so that we don't accidently overwrite that in the next step.
+        for (int i = 0 ; i < 9+4 ; i++) {
+            int playerIndex = getInventoryIndex(i);
+            if (inventory.getStackInSlot(playerIndex) == null) {
+                if (currentStacks[i] != null) {
+                    int internalInventoryIndex = getInternalInventoryIndex(index, i);
+                    ItemStack desiredStack = getStackInSlot(internalInventoryIndex);
+                    // First check if we don't want to force the slot to be empty
+                    if (desiredStack == null || desiredStack.getItem() != ModItems.forceEmptyItem) {
+                        inventory.setInventorySlotContents(playerIndex, currentStacks[i]);
+                        currentStacks[i] = null;
+                    } else {
+                        inventory.setInventorySlotContents(playerIndex, new ItemStack(ModItems.forceEmptyItem));
                     }
+                } else {
+                    inventory.setInventorySlotContents(playerIndex, new ItemStack(ModItems.forceEmptyItem));
                 }
             }
         }
 
+        // All items that we didn't find a place for we need to put in the inventory
+        // somewhere.
         for (int i = 0 ; i < 9+4 ; i++) {
-            int inventoryIndex = getInventoryIndex(i);
-            ItemStack currentStack = inventory.getStackInSlot(inventoryIndex);
-            if (currentStack == dummy) {
-                inventory.setInventorySlotContents(inventoryIndex, null);
+            if (currentStacks[i] != null) {
+                if (inventory.addItemStackToInventory(currentStacks[i])) {
+                    currentStacks[i] = null;
+                }
             }
         }
 
-        for (ItemStack stack : failedStacks) {
-            inventory.addItemStackToInventory(stack);
-            // Check for failure and spawn in the world?
+        // Now we clear the dummy items from our slots.
+        for (int i = 0 ; i < 9+4 ; i++) {
+            int playerIndex = getInventoryIndex(i);
+            if (inventory.getStackInSlot(playerIndex) != null && inventory.getStackInSlot(playerIndex).getItem() == ModItems.forceEmptyItem) {
+                inventory.setInventorySlotContents(playerIndex, null);
+            }
         }
 
+        // Now it is possible that some of the items we couldn't place back because the slots in the hotbar
+        // were locked. Now that they are unlocked we can try again.
+        for (int i = 0 ; i < 9+4 ; i++) {
+            if (currentStacks[i] != null) {
+                if (inventory.addItemStackToInventory(currentStacks[i])) {
+                    currentStacks[i] = null;
+                }
+            }
+        }
 
+        // Finally it is possible that some items could not be placed anywhere.
+        // @todo: spawn the remaining items in the world
+
+        markDirty();
         player.openContainer.detectAndSendChanges();
     }
+
+    private ItemStack findBestMatchingStack(ItemStack desired, ItemStack[] currentStacks, InventoryPlayer inventoryPlayer) {
+        for (int i = 0 ; i < currentStacks.length ; i++) {
+            ItemStack current = currentStacks[i];
+            if (current != null && current.isItemEqual(desired)) {
+                currentStacks[i] = null;
+                return current;
+            }
+        }
+
+        // We don't look in the armor or hotbar because we don't want to remove something
+        // there that we just placed.
+        for (int i = 9 ; i < 9*4 ; i++) {
+            ItemStack current = inventoryPlayer.getStackInSlot(i);
+            if (current != null && current.isItemEqual(desired)) {
+                inventoryPlayer.setInventorySlotContents(i, null);
+                return current;
+            }
+        }
+
+        // Check our own internal inventory.
+        for (int i = SLOT_BUFFER ; i < SLOT_BUFFER + 16 ; i++) {
+            ItemStack current = getStackInSlot(i);
+            if (current != null && current.isItemEqual(desired)) {
+                setInventorySlotContents(i, null);
+                return current;
+            }
+        }
+
+        // @todo: check external inventory
+
+        return null;
+    }
+
 
     private ItemStack findAndRemoveItemStack(ItemStack desired, InventoryPlayer inventory) {
         for (int i = 0 ; i < 9*4 + 4 ; i++) {
@@ -202,6 +266,10 @@ public class GearSwapperTE extends TileEntity implements IInventory {
         return index >= 0 && index < (4 + 4 * (9+4));
     }
 
+    public boolean isIconSlot(int index) {
+        return index >= 0 && index < 4;
+    }
+
     @Override
     public ItemStack decrStackSize(int index, int amount) {
         if (index >= stacks.length) {
@@ -236,7 +304,7 @@ public class GearSwapperTE extends TileEntity implements IInventory {
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int p_70304_1_) {
+    public ItemStack getStackInSlotOnClosing(int index) {
         return null;
     }
 

@@ -7,6 +7,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import mcjty.gearswap.Config;
 import mcjty.gearswap.GearSwap;
 import mcjty.gearswap.blocks.ModBlocks;
+import mcjty.gearswap.items.ModItems;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Level;
 
@@ -16,7 +17,7 @@ public abstract class CommonProxy {
 
     public void preInit(FMLPreInitializationEvent e) {
         mainConfig = GearSwap.config;
-//        ModItems.init();
+        ModItems.init();
         ModBlocks.init();
         readMainConfig();
 //        ModCrafting.init();
