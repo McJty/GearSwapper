@@ -23,6 +23,11 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
     public static final int SLOT_GHOST = 4;
     public static final int SLOT_BUFFER = SLOT_GHOST + 4*(9+4);
 
+    public static final int MODE_PLAYERINV = 0;
+    public static final int MODE_LOCALINV = 1;
+    public static final int MODE_REMOTEINV = 2;
+
+    private int exportModes[] = new int[] { MODE_PLAYERINV, MODE_LOCALINV, MODE_REMOTEINV };
 
     @Override
     public boolean canUpdate() {
@@ -37,6 +42,9 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
 
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         readBufferFromNBT(tagCompound);
+        exportModes[0] = tagCompound.getInteger("export0");
+        exportModes[1] = tagCompound.getInteger("export1");
+        exportModes[2] = tagCompound.getInteger("export2");
     }
 
     private void readBufferFromNBT(NBTTagCompound tagCompound) {
@@ -55,6 +63,9 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
 
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         writeBufferToNBT(tagCompound);
+        tagCompound.setInteger("export0", exportModes[0]);
+        tagCompound.setInteger("export1", exportModes[1]);
+        tagCompound.setInteger("export2", exportModes[2]);
     }
 
     private void writeBufferToNBT(NBTTagCompound tagCompound) {
@@ -70,7 +81,18 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
         tagCompound.setTag("Items", bufferTagList);
     }
 
+    public int getExportMode(int i) {
+        return exportModes[i];
+    }
 
+    public void toggelExportMode(int i) {
+        exportModes[i]++;
+        if (exportModes[i] > MODE_REMOTEINV) {
+            exportModes[i] = MODE_PLAYERINV;
+        }
+        markDirty();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
 
     public void setFaceIconSlot(int index, ItemStack stack) {
         setInventorySlotContents(index, stack);

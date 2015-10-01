@@ -4,10 +4,12 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import mcjty.gearswap.Config;
 import mcjty.gearswap.GearSwap;
 import mcjty.gearswap.blocks.ModBlocks;
 import mcjty.gearswap.items.ModItems;
+import mcjty.gearswap.network.PacketHandler;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Level;
 
@@ -20,6 +22,9 @@ public abstract class CommonProxy {
         ModItems.init();
         ModBlocks.init();
         readMainConfig();
+
+        PacketHandler.registerMessages("gearswapper");
+
 //        ModCrafting.init();
 //        PacketHandler.registerMessages("gearswap");
     }
