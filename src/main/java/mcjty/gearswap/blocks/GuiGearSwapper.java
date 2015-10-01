@@ -12,6 +12,7 @@ public class GuiGearSwapper extends GuiContainer {
     private final GearSwapperTE gearSwapperTE;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(GearSwap.MODID, "textures/gui/gearswapper.png");
+    private static final ResourceLocation guiElements = new ResourceLocation(GearSwap.MODID, "textures/gui/guielements.png");
 
     public GuiGearSwapper(GearSwapperTE tileEntity, GearSwapperContainer container) {
         super(container);
@@ -30,5 +31,9 @@ public class GuiGearSwapper extends GuiContainer {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(iconLocation);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, WIDTH, HEIGHT);
+        mc.getTextureManager().bindTexture(guiElements);
+        drawTexturedModalRect(guiLeft+8, guiTop+8, 0, 0, 16, 16);
+        drawTexturedModalRect(guiLeft+8, guiTop+28, 16, 0, 16, 16);
+        drawTexturedModalRect(guiLeft+8, guiTop+48, 32, 0, 16, 16);
     }
 }

@@ -42,13 +42,19 @@ public class GearSwapperContainer extends Container {
         }
 
         index = 0;
+        // Hotbar slots
         for (int i = 0 ; i < 9 ; i++) {
             addSlotToContainer(new Slot(playerInventory, index++, 87 + i*18, 227));
         }
+        // Inventory slots
         for (int j = 0 ; j < 3 ; j++) {
             for (int i = 0; i < 9; i++) {
                 addSlotToContainer(new Slot(playerInventory, index++, 87 + i*18, 169 + j*18));
             }
+        }
+        // Armor slots
+        for (int i = 0 ; i < 4 ; i++) {
+            addSlotToContainer(new Slot(playerInventory, index++, 10, 143 - i*18));
         }
     }
 

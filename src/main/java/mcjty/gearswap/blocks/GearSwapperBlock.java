@@ -92,7 +92,7 @@ public class GearSwapperBlock extends Block implements ITileEntityProvider {
                 if (tileEntity instanceof GearSwapperTE) {
                     GearSwapperTE gearSwapperTE = (GearSwapperTE) tileEntity;
 
-                    if (sy < .1) {
+                    if (sy < .13) {
                         player.openGui(GearSwap.instance, GearSwap.GUI_GEARSWAP, world, x, y, z);
                         return true;
                     }
