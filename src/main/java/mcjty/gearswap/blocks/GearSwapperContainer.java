@@ -1,5 +1,6 @@
 package mcjty.gearswap.blocks;
 
+import com.google.common.collect.Range;
 import mcjty.gearswap.items.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -68,6 +69,56 @@ public class GearSwapperContainer extends Container {
         }
         return true;
     }
+
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer player, int index) {
+        ItemStack itemstack = null;
+//        Slot slot = (Slot)this.inventorySlots.get(index);
+//
+//        if (slot != null && slot.getHasStack()) {
+//            ItemStack origStack = slot.getStack();
+//            itemstack = origStack.copy();
+//
+//            if (gearInventory.isGhostSlot(index)) {
+//                slot.onSlotChange(origStack, itemstack);
+//            } else if (factory.isGhostSlot(index) || factory.isGhostOutputSlot(index)) {
+//                return null; // @@@ Right?
+//            } else if (factory.isPlayerInventorySlot(index)) {
+//                if (!mergeItemStacks(origStack, SlotType.SLOT_SPECIFICITEM, false)) {
+//                    if (!mergeItemStacks(origStack, SlotType.SLOT_INPUT, false)) {
+//                        if (!mergeItemStacks(origStack, SlotType.SLOT_PLAYERHOTBAR, false)) {
+//                            return null;
+//                        }
+//                    }
+//                }
+//            } else if (factory.isPlayerHotbarSlot(index)) {
+//                if (!mergeItemStacks(origStack, SlotType.SLOT_SPECIFICITEM, false)) {
+//                    if (!mergeItemStacks(origStack, SlotType.SLOT_INPUT, false)) {
+//                        if (!mergeItemStacks(origStack, SlotType.SLOT_PLAYERINV, false)) {
+//                            return null;
+//                        }
+//                    }
+//                }
+//            } else {
+//                Logging.log("Weird slot at index: " + index);
+//            }
+//
+//            if (origStack.stackSize == 0) {
+//                slot.putStack(null);
+//            } else {
+//                slot.onSlotChanged();
+//            }
+//
+//            if (origStack.stackSize == itemstack.stackSize) {
+//                return null;
+//            }
+//
+//            slot.onPickupFromSlot(player, origStack);
+//        }
+//
+        return itemstack;
+    }
+
 
     @Override
     public ItemStack slotClick(int index, int button, int mode, EntityPlayer player) {

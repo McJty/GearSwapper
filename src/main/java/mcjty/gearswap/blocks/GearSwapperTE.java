@@ -1,8 +1,10 @@
 package mcjty.gearswap.blocks;
 
 import mcjty.gearswap.items.ModItems;
+import mcjty.gearswap.varia.InventoryHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,6 +14,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class GearSwapperTE extends TileEntity implements ISidedInventory {
 
@@ -171,11 +174,10 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
             }
         }
 
-        // All items that we didn't find a place for we need to put in the inventory
-        // somewhere.
+        // All items that we didn't find a place for we need to back somewhere.
         for (int i = 0 ; i < 9+4 ; i++) {
             if (currentStacks[i] != null) {
-                if (inventory.addItemStackToInventory(currentStacks[i])) {
+                if (!storeItem(inventory, currentStacks[i])) {
                     currentStacks[i] = null;
                 }
             }
@@ -204,6 +206,40 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
 
         markDirty();
         player.openContainer.detectAndSendChanges();
+    }
+
+    private boolean storeItem(InventoryPlayer inventory, ItemStack item) {
+        for (int exportMode : exportModes) {
+            switch (exportMode) {
+                case MODE_PLAYERINV:
+                    if (inventory.addItemStackToInventory(item)) {
+                        return true;
+                    }
+                    break;
+                case MODE_LOCALINV: {
+                    int left = InventoryHelper.mergeItemStack(this, item, SLOT_BUFFER, SLOT_BUFFER + 16, null);
+                    if (left == 0) {
+                        return true;
+                    }
+                    item.stackSize = left;
+                    break;
+                }
+                case MODE_REMOTEINV:
+                    for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+                        TileEntity te = worldObj.getTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
+                        if (te instanceof IInventory) {
+                            IInventory otherInventory = (IInventory) te;
+                            int left = InventoryHelper.mergeItemStackSafe(otherInventory, direction.getOpposite().ordinal(), item, 0, otherInventory.getSizeInventory(), null);
+                            if (left == 0) {
+                                return true;
+                            }
+                            item.stackSize = left;
+                        }
+                    }
+                    break;
+            }
+        }
+        return false;
     }
 
     private ItemStack findBestMatchingStack(ItemStack desired, ItemStack[] currentStacks, InventoryPlayer inventoryPlayer) {
