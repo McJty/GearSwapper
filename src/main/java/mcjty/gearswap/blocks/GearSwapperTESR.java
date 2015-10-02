@@ -34,7 +34,7 @@ public class GearSwapperTESR extends TileEntitySpecialRenderer {
         if (mouseOver.blockX == tileEntity.xCoord && mouseOver.blockY == tileEntity.yCoord && mouseOver.blockZ == tileEntity.zCoord) {
             index = GearSwapperBlock.getSlot(mouseOver, tileEntity.getWorldObj());
         } else {
-            index = -1;
+            index = -2;
         }
 
         Block block = tileEntity.getBlockType();
