@@ -21,7 +21,6 @@ import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +28,6 @@ import java.util.List;
 import static net.minecraftforge.common.util.ForgeDirection.DOWN;
 
 public class GearSwapperBlock extends Block implements ITileEntityProvider {
-    private IIcon iconFront;
     private IIcon iconSide;
 
     public GearSwapperBlock() {
@@ -64,16 +62,41 @@ public class GearSwapperBlock extends Block implements ITileEntityProvider {
         list.add("Right-click on bottom to open GUI.");
     }
 
+
+    public static int getSlot(MovingObjectPosition mouseOver, World world) {
+        int x = mouseOver.blockX;
+        int y = mouseOver.blockY;
+        int z = mouseOver.blockZ;
+        ForgeDirection k = getOrientation(world, x, y, z);
+        if (mouseOver.sideHit == k.ordinal()) {
+            float sx = (float) (mouseOver.hitVec.xCoord - x);
+            float sy = (float) (mouseOver.hitVec.yCoord - y);
+            float sz = (float) (mouseOver.hitVec.zCoord - z);
+            if (sy < .13) {
+                return -1;
+            }
+            return calculateHitIndex(sx, sy, sz, k);
+        } else {
+            return -1;
+        }
+    }
+
     @SideOnly(Side.CLIENT)
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        ForgeDirection side = accessor.getSide();
+        MovingObjectPosition mouseOver = accessor.getPosition();
+        int index = getSlot(mouseOver, accessor.getWorld());
+        if (index == -1) {
+            currenttip.add("Right-click to access GUI");
+        } else {
+            currenttip.add("Sneak-left-click to store current setup in this slot");
+            currenttip.add("Right-click to restore current setup from this slot");
+        }
         return currenttip;
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
-        iconFront = iconRegister.registerIcon(GearSwap.MODID + ":gearSwapperFront");
         iconSide = iconRegister.registerIcon("minecraft:planks_oak");
     }
 
@@ -81,12 +104,8 @@ public class GearSwapperBlock extends Block implements ITileEntityProvider {
     public void onBlockClicked(World world, int x, int y, int z, EntityPlayer player) {
         if (!world.isRemote && player.isSneaking()) {
             MovingObjectPosition mouseOver = Minecraft.getMinecraft().objectMouseOver;
-            ForgeDirection k = getOrientation(world, x, y, z);
-            if (mouseOver.sideHit == k.ordinal()) {
-                float sx = (float) (mouseOver.hitVec.xCoord - x);
-                float sy = (float) (mouseOver.hitVec.yCoord - y);
-                float sz = (float) (mouseOver.hitVec.zCoord - z);
-                int index = calculateHitIndex(sx, sy, sz, k);
+            int index = getSlot(mouseOver, world);
+            if (index >= 0) {
                 GearSwapperTE gearSwapperTE = (GearSwapperTE) world.getTileEntity(x, y, z);
                 gearSwapperTE.rememberSetup(index, player);
                 player.addChatComponentMessage(new ChatComponentText(EnumChatFormatting.YELLOW + "Remembered current hotbar and armor"));
@@ -121,7 +140,7 @@ public class GearSwapperBlock extends Block implements ITileEntityProvider {
         return true;
     }
 
-    private int calculateHitIndex(float sx, float sy, float sz, ForgeDirection k) {
+    private static int calculateHitIndex(float sx, float sy, float sz, ForgeDirection k) {
         int index = 0;
         switch (k) {
             case DOWN:
@@ -194,21 +213,12 @@ public class GearSwapperBlock extends Block implements ITileEntityProvider {
 
     @Override
     public IIcon getIcon(int side, int meta) {
-        if (side == ForgeDirection.SOUTH.ordinal()) {
-            return iconFront;
-        } else {
-            return iconSide;
-        }
+        return iconSide;
     }
 
     @Override
     public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
-        ForgeDirection k = getOrientation(world, x, y, z);
-        if (side == k.ordinal()) {
-            return iconFront;
-        } else {
-            return iconSide;
-        }
+        return iconSide;
     }
 
     private static ForgeDirection getOrientation(IBlockAccess world, int x, int y, int z) {
