@@ -70,10 +70,6 @@ public class GearSwapperTESR extends TileEntitySpecialRenderer {
 
         GL11.glDepthMask(false);
 
-        boolean lighting = GL11.glIsEnabled(GL11.GL_LIGHTING);
-        if (!lighting) {
-            GL11.glEnable(GL11.GL_LIGHTING);
-        }
         boolean depthTest = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
         if (!depthTest) {
             GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -105,15 +101,12 @@ public class GearSwapperTESR extends TileEntitySpecialRenderer {
             itemRender.renderItemAndEffectIntoGUI(fontRenderer, textureManager, stack3, 40, 37);
         }
 
-        if (!lighting) {
-            GL11.glDisable(GL11.GL_LIGHTING);
-        }
         if (!depthTest) {
             GL11.glDisable(GL11.GL_DEPTH_TEST);
         }
 
-//        GL11.glDepthMask(false);
-        RenderHelper.enableStandardItemLighting();
+        GL11.glDepthMask(true);
+        RenderHelper.disableStandardItemLighting();
     }
 
 }
