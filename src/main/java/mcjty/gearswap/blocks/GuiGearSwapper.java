@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL11;
 
 public class GuiGearSwapper extends GuiContainer {
     public static final int WIDTH = 256;
-    public static final int HEIGHT = 251;
+    public static final int HEIGHT = 247;
 
     private final GearSwapperTE gearSwapperTE;
 

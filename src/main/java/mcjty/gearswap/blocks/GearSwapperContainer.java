@@ -16,14 +16,14 @@ public class GearSwapperContainer extends Container {
         gearInventory = gearSwapperTE;
 
         int index = 0;
-        addSlotToContainer(new GhostSlot(gearInventory, index++, 46, 8));
-        addSlotToContainer(new GhostSlot(gearInventory, index++, 64, 47));
-        addSlotToContainer(new GhostSlot(gearInventory, index++, 46, 104));
-        addSlotToContainer(new GhostSlot(gearInventory, index++, 64, 143));
+        addSlotToContainer(new GhostSlot(gearInventory, index++, 46, 6));
+        addSlotToContainer(new GhostSlot(gearInventory, index++, 64, 45));
+        addSlotToContainer(new GhostSlot(gearInventory, index++, 46, 102));
+        addSlotToContainer(new GhostSlot(gearInventory, index++, 64, 141));
 
         for (int i = 0 ; i < 4 ; i++) {
             int x = 87;
-            int y = 26 + i * 39;
+            int y = 24 + i * 39;
             for (int h = 0 ; h < 9 ; h++) {
                 addSlotToContainer(new GhostSlot(gearInventory, index++, x, y));
                 x += 18;
@@ -37,24 +37,24 @@ public class GearSwapperContainer extends Container {
 
         for (int y = 0 ; y < 4 ; y++) {
             for (int x = 0 ; x < 4 ; x++) {
-                addSlotToContainer(new Slot(gearInventory, index++, 10 + x*18, 169 + y*18));
+                addSlotToContainer(new Slot(gearInventory, index++, 10 + x*18, 167 + y*18));
             }
         }
 
         index = 0;
         // Hotbar slots
         for (int i = 0 ; i < 9 ; i++) {
-            addSlotToContainer(new Slot(playerInventory, index++, 87 + i*18, 227));
+            addSlotToContainer(new Slot(playerInventory, index++, 87 + i*18, 225));
         }
         // Inventory slots
         for (int j = 0 ; j < 3 ; j++) {
             for (int i = 0; i < 9; i++) {
-                addSlotToContainer(new Slot(playerInventory, index++, 87 + i*18, 169 + j*18));
+                addSlotToContainer(new Slot(playerInventory, index++, 87 + i*18, 167 + j*18));
             }
         }
         // Armor slots
         for (int i = 0 ; i < 4 ; i++) {
-            addSlotToContainer(new Slot(playerInventory, index++, 10, 143 - i*18));
+            addSlotToContainer(new Slot(playerInventory, index++, 10, 141 - i*18));
         }
     }
 
