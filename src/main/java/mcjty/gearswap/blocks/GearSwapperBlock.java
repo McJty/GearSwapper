@@ -3,6 +3,8 @@ package mcjty.gearswap.blocks;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.gearswap.GearSwap;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -19,6 +21,7 @@ import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +59,15 @@ public class GearSwapperBlock extends Block implements ITileEntityProvider {
         }
         list.add("This block can remember four different sets of tools, weapons");
         list.add("and armor and allows you to quickly switch between them.");
+        list.add("Sneak-left-click to store current hotbar+armor in slot.");
+        list.add("Right-click on slot to restore hotbar+armor.");
+        list.add("Right-click on bottom to open GUI.");
+    }
+
+    @SideOnly(Side.CLIENT)
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        ForgeDirection side = accessor.getSide();
+        return currenttip;
     }
 
     @SideOnly(Side.CLIENT)
