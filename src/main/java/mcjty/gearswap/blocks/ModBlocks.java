@@ -8,6 +8,7 @@ public class ModBlocks {
     public static GearSwapperBlock ironGearSwapperBlock;
     public static GearSwapperBlock lapisGearSwapperBlock;
     public static GearSwapperBlock stoneGearSwapperBlock;
+    public static GearSwapperGlassBlock glassGearSwapperBlock;
 
     public static void init() {
         woodenGearSwapperBlock = new GearSwapperBlock(Material.wood, "minecraft:planks_oak", "gearSwapperWood");
@@ -21,6 +22,9 @@ public class ModBlocks {
 
         stoneGearSwapperBlock = new GearSwapperBlock(Material.rock, "minecraft:stone", "gearSwapperStone");
         GameRegistry.registerBlock(stoneGearSwapperBlock, "gearSwapperStone");
+
+        glassGearSwapperBlock = new GearSwapperGlassBlock(Material.glass, "minecraft:glass", "gearSwapperGlass");
+        GameRegistry.registerBlock(glassGearSwapperBlock, "gearSwapperGlass");
 
         GameRegistry.registerTileEntity(GearSwapperTE.class, "gearSwapper");
     }

@@ -14,5 +14,6 @@ public class ModCrafting {
         GameRegistry.addRecipe(new ItemStack(ModBlocks.ironGearSwapperBlock), "pCp", "pcp", "ppp", 'p', Items.iron_ingot, 'C', Items.comparator, 'c', Blocks.chest);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.lapisGearSwapperBlock), "pCp", "pcp", "ppp", 'p', lapisStack, 'C', Items.comparator, 'c', Blocks.chest);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.stoneGearSwapperBlock), "pCp", "pcp", "ppp", 'p', Blocks.stone, 'C', Items.comparator, 'c', Blocks.chest);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.glassGearSwapperBlock), "pCp", "pcp", "ppp", 'p', Blocks.glass, 'C', Items.comparator, 'c', Blocks.chest);
     }
 }
