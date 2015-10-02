@@ -1,6 +1,5 @@
 package mcjty.gearswap.blocks;
 
-import com.google.common.collect.Range;
 import mcjty.gearswap.items.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -73,49 +72,29 @@ public class GearSwapperContainer extends Container {
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int index) {
         ItemStack itemstack = null;
-//        Slot slot = (Slot)this.inventorySlots.get(index);
-//
-//        if (slot != null && slot.getHasStack()) {
-//            ItemStack origStack = slot.getStack();
-//            itemstack = origStack.copy();
-//
-//            if (gearInventory.isGhostSlot(index)) {
-//                slot.onSlotChange(origStack, itemstack);
-//            } else if (factory.isGhostSlot(index) || factory.isGhostOutputSlot(index)) {
-//                return null; // @@@ Right?
-//            } else if (factory.isPlayerInventorySlot(index)) {
-//                if (!mergeItemStacks(origStack, SlotType.SLOT_SPECIFICITEM, false)) {
-//                    if (!mergeItemStacks(origStack, SlotType.SLOT_INPUT, false)) {
-//                        if (!mergeItemStacks(origStack, SlotType.SLOT_PLAYERHOTBAR, false)) {
-//                            return null;
-//                        }
-//                    }
-//                }
-//            } else if (factory.isPlayerHotbarSlot(index)) {
-//                if (!mergeItemStacks(origStack, SlotType.SLOT_SPECIFICITEM, false)) {
-//                    if (!mergeItemStacks(origStack, SlotType.SLOT_INPUT, false)) {
-//                        if (!mergeItemStacks(origStack, SlotType.SLOT_PLAYERINV, false)) {
-//                            return null;
-//                        }
-//                    }
-//                }
-//            } else {
-//                Logging.log("Weird slot at index: " + index);
-//            }
-//
-//            if (origStack.stackSize == 0) {
-//                slot.putStack(null);
-//            } else {
-//                slot.onSlotChanged();
-//            }
-//
-//            if (origStack.stackSize == itemstack.stackSize) {
-//                return null;
-//            }
-//
-//            slot.onPickupFromSlot(player, origStack);
-//        }
-//
+        Slot slot = (Slot) this.inventorySlots.get(index);
+
+        if (slot != null && slot.getHasStack()) {
+            ItemStack origStack = slot.getStack();
+            itemstack = origStack.copy();
+
+            if (gearInventory.isGhostSlot(index)) {
+                return null;
+            } else if (gearInventory.isBufferSlot(index)) {
+                if (!this.mergeItemStack(origStack, GearSwapperTE.SLOT_BUFFER + 16, this.inventorySlots.size(), true)) {
+                    return null;
+                }
+            } else if (!this.mergeItemStack(origStack, GearSwapperTE.SLOT_BUFFER, GearSwapperTE.SLOT_BUFFER + 16, false)) {
+                return null;
+            }
+
+            if (origStack.stackSize == 0) {
+                slot.putStack(null);
+            } else {
+                slot.onSlotChanged();
+            }
+        }
+
         return itemstack;
     }
 

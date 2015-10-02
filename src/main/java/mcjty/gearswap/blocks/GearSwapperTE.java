@@ -177,7 +177,7 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
         // All items that we didn't find a place for we need to back somewhere.
         for (int i = 0 ; i < 9+4 ; i++) {
             if (currentStacks[i] != null) {
-                if (!storeItem(inventory, currentStacks[i])) {
+                if (storeItem(inventory, currentStacks[i])) {
                     currentStacks[i] = null;
                 }
             }
@@ -243,9 +243,28 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
     }
 
     private ItemStack findBestMatchingStack(ItemStack desired, ItemStack[] currentStacks, InventoryPlayer inventoryPlayer) {
+        ItemStack bestMatch = findBestMatchingStackWithMatcher(desired, currentStacks, inventoryPlayer, new ItemMatcher() {
+            @Override
+            public boolean match(ItemStack desired, ItemStack current) {
+                return current != null && current.isItemEqual(desired);
+            }
+        });
+        if (bestMatch != null) {
+            return bestMatch;
+        }
+        bestMatch = findBestMatchingStackWithMatcher(desired, currentStacks, inventoryPlayer, new ItemMatcher() {
+            @Override
+            public boolean match(ItemStack desired, ItemStack current) {
+                return current != null && current.getItem() == desired.getItem();
+            }
+        });
+        return bestMatch;
+    }
+
+    private ItemStack findBestMatchingStackWithMatcher(ItemStack desired, ItemStack[] currentStacks, InventoryPlayer inventoryPlayer, ItemMatcher matcher) {
         for (int i = 0 ; i < currentStacks.length ; i++) {
             ItemStack current = currentStacks[i];
-            if (current != null && current.isItemEqual(desired)) {
+            if (matcher.match(desired, current)) {
                 currentStacks[i] = null;
                 return current;
             }
@@ -255,7 +274,7 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
         // there that we just placed.
         for (int i = 9 ; i < 9*4 ; i++) {
             ItemStack current = inventoryPlayer.getStackInSlot(i);
-            if (current != null && current.isItemEqual(desired)) {
+            if (matcher.match(desired, current)) {
                 inventoryPlayer.setInventorySlotContents(i, null);
                 return current;
             }
@@ -264,13 +283,40 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
         // Check our own internal inventory.
         for (int i = SLOT_BUFFER ; i < SLOT_BUFFER + 16 ; i++) {
             ItemStack current = getStackInSlot(i);
-            if (current != null && current.isItemEqual(desired)) {
+            if (matcher.match(desired, current)) {
                 setInventorySlotContents(i, null);
                 return current;
             }
         }
 
-        // @todo: check external inventory
+        // Check external inventories.
+        for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+            TileEntity te = worldObj.getTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
+            if (te instanceof IInventory) {
+                IInventory otherInventory = (IInventory) te;
+                ISidedInventory sidedInventory = null;
+                if (otherInventory instanceof ISidedInventory) {
+                    sidedInventory = (ISidedInventory) otherInventory;
+                }
+                for (int i = 0; i < otherInventory.getSizeInventory(); i++) {
+                    ItemStack current = otherInventory.getStackInSlot(i);
+                    boolean ok = false;
+                    if (matcher.match(desired, current)) {
+                        if (sidedInventory != null) {
+                            if (sidedInventory.canExtractItem(i, current, direction.getOpposite().ordinal())) {
+                                ok = true;
+                            }
+                        } else {
+                            ok = true;
+                        }
+                    }
+                    if (ok) {
+                        otherInventory.setInventorySlotContents(i, null);
+                        return current;
+                    }
+                }
+            }
+        }
 
         return null;
     }
@@ -311,6 +357,8 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
     public boolean isIconSlot(int index) {
         return index >= 0 && index < 4;
     }
+
+    public boolean isBufferSlot(int index) { return index >= SLOT_BUFFER && index < SLOT_BUFFER + 16; }
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
@@ -432,4 +480,9 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
     public boolean canInsertItem(int index, ItemStack stack, int side) {
         return index >= SLOT_BUFFER;
     }
+
+    private static interface ItemMatcher {
+        boolean match(ItemStack desired, ItemStack current);
+    }
+
 }
