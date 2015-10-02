@@ -33,9 +33,9 @@ public class GhostSlot extends Slot {
 
     @Override
     public void putStack(ItemStack stack) {
-        if (stack != null) {
-            stack.stackSize = 1;
-        }
+//        if (stack != null) {
+//            stack.stackSize = 1;
+//        }
         inventory.setInventorySlotContents(getSlotIndex(), stack);
         onSlotChanged();
     }

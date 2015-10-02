@@ -243,29 +243,63 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
     }
 
     private ItemStack findBestMatchingStack(ItemStack desired, ItemStack[] currentStacks, InventoryPlayer inventoryPlayer) {
-        ItemStack bestMatch = findBestMatchingStackWithMatcher(desired, currentStacks, inventoryPlayer, new ItemMatcher() {
-            @Override
-            public boolean match(ItemStack desired, ItemStack current) {
-                return current != null && current.isItemEqual(desired);
+        ItemStack bestSoFar = null;
+        desired = desired.copy();
+        while (true) {
+            final ItemStack finalBestSoFar = bestSoFar;
+            ItemStack bestMatch = findBestMatchingStackWithMatcher(desired, currentStacks, inventoryPlayer, new ItemMatcher() {
+                @Override
+                public boolean match(ItemStack desired, ItemStack current) {
+                    if (finalBestSoFar != null && current != null) {
+                        if (!ItemStack.areItemStackTagsEqual(finalBestSoFar, current)) {
+                            return false;
+                        }
+                    }
+                    return current != null && current.isItemEqual(desired);
+                }
+            });
+            if (bestMatch == null) {
+                bestMatch = findBestMatchingStackWithMatcher(desired, currentStacks, inventoryPlayer, new ItemMatcher() {
+                    @Override
+                    public boolean match(ItemStack desired, ItemStack current) {
+                        if (finalBestSoFar != null && current != null) {
+                            if (!ItemStack.areItemStackTagsEqual(finalBestSoFar, current)) {
+                                return false;
+                            }
+                        }
+                        return current != null && current.getItem() == desired.getItem();
+                    }
+                });
             }
-        });
-        if (bestMatch != null) {
-            return bestMatch;
+            if (bestMatch == null) {
+                return bestSoFar;
+            }
+
+            if (bestSoFar == null) {
+                bestSoFar = bestMatch;
+                desired.stackSize -= bestMatch.stackSize;
+            } else {
+                bestSoFar.stackSize += bestMatch.stackSize;
+                desired.stackSize -= bestMatch.stackSize;
+            }
+
+            if (desired.stackSize <= 0) {
+                return bestSoFar;
+            }
         }
-        bestMatch = findBestMatchingStackWithMatcher(desired, currentStacks, inventoryPlayer, new ItemMatcher() {
-            @Override
-            public boolean match(ItemStack desired, ItemStack current) {
-                return current != null && current.getItem() == desired.getItem();
-            }
-        });
-        return bestMatch;
     }
 
     private ItemStack findBestMatchingStackWithMatcher(ItemStack desired, ItemStack[] currentStacks, InventoryPlayer inventoryPlayer, ItemMatcher matcher) {
         for (int i = 0 ; i < currentStacks.length ; i++) {
             ItemStack current = currentStacks[i];
             if (matcher.match(desired, current)) {
-                currentStacks[i] = null;
+                if (desired.stackSize < current.stackSize) {
+                    current = current.copy();
+                    currentStacks[i].stackSize -= desired.stackSize;
+                    current.stackSize = desired.stackSize;
+                } else {
+                    currentStacks[i] = null;
+                }
                 return current;
             }
         }
@@ -275,7 +309,12 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
         for (int i = 9 ; i < 9*4 ; i++) {
             ItemStack current = inventoryPlayer.getStackInSlot(i);
             if (matcher.match(desired, current)) {
-                inventoryPlayer.setInventorySlotContents(i, null);
+                if (desired.stackSize < current.stackSize) {
+                    current = inventoryPlayer.decrStackSize(i, desired.stackSize);
+                } else {
+                    inventoryPlayer.setInventorySlotContents(i, null);
+                }
+
                 return current;
             }
         }
@@ -284,7 +323,12 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
         for (int i = SLOT_BUFFER ; i < SLOT_BUFFER + 16 ; i++) {
             ItemStack current = getStackInSlot(i);
             if (matcher.match(desired, current)) {
-                setInventorySlotContents(i, null);
+                if (desired.stackSize < current.stackSize) {
+                    current = decrStackSize(i, desired.stackSize);
+                } else {
+                    setInventorySlotContents(i, null);
+                }
+
                 return current;
             }
         }
@@ -311,7 +355,11 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
                         }
                     }
                     if (ok) {
-                        otherInventory.setInventorySlotContents(i, null);
+                        if (desired.stackSize < current.stackSize) {
+                            current = otherInventory.decrStackSize(i, desired.stackSize);
+                        } else {
+                            otherInventory.setInventorySlotContents(i, null);
+                        }
                         return current;
                     }
                 }
