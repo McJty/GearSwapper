@@ -102,6 +102,8 @@ public class GearSwapperBlock extends Block implements ITileEntityProvider {
                     gearSwapperTE.restoreSetup(index, player);
                     player.addChatComponentMessage(new ChatComponentText(EnumChatFormatting.YELLOW + "Restored hotbar and armor"));
                 }
+            } else {
+                player.openGui(GearSwap.instance, GearSwap.GUI_GEARSWAP, world, x, y, z);
             }
         }
         return true;
