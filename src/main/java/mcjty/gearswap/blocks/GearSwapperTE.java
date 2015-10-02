@@ -2,6 +2,7 @@ package mcjty.gearswap.blocks;
 
 import mcjty.gearswap.items.ModItems;
 import mcjty.gearswap.varia.InventoryHelper;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
@@ -202,7 +203,12 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
         }
 
         // Finally it is possible that some items could not be placed anywhere.
-        // @todo: spawn the remaining items in the world
+        for (int i = 0 ; i < 9+4 ; i++) {
+            if (currentStacks[i] != null) {
+                EntityItem entityItem = new EntityItem(worldObj, xCoord, yCoord, zCoord, currentStacks[i]);
+                worldObj.spawnEntityInWorld(entityItem);
+            }
+        }
 
         markDirty();
         player.openContainer.detectAndSendChanges();

@@ -5,7 +5,11 @@ import mcjty.gearswap.network.PacketHandler;
 import mcjty.gearswap.network.PacketToggleMode;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GuiGearSwapper extends GuiContainer {
     public static final int WIDTH = 256;
@@ -35,15 +39,25 @@ public class GuiGearSwapper extends GuiContainer {
         x -= guiLeft;
         y -= guiTop;
 
-        if (x >= 9 && x <= 9+16) {
-            if (y >= 8 && y <= 8+16) {
-                toggleMode(0);
-            } else if (y >= 28 && y <= 28+16) {
-                toggleMode(1);
-            } else if (y >= 48 && y <= 48+16) {
-                toggleMode(2);
-            }
+        if (isTopModeSlot(x, y)) {
+            toggleMode(0);
+        } else if (isMiddleModeslot(x, y)) {
+            toggleMode(1);
+        } else if (isBottomModeSlot(x, y)) {
+            toggleMode(2);
         }
+    }
+
+    private boolean isBottomModeSlot(int x, int y) {
+        return x >= 9 && x <= 9+16 && y >= 48 && y <= 48+16;
+    }
+
+    private boolean isMiddleModeslot(int x, int y) {
+        return x >= 9 && x <= 9+16 && y >= 28 && y <= 28+16;
+    }
+
+    private boolean isTopModeSlot(int x, int y) {
+        return x >= 9 && x <= 9+16 && y >= 8 && y <= 8+16;
     }
 
     private void toggleMode(int i) {
@@ -56,12 +70,38 @@ public class GuiGearSwapper extends GuiContainer {
         mc.getTextureManager().bindTexture(iconLocation);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, WIDTH, HEIGHT);
 
+        drawModes();
+        drawTooltips();
+    }
+
+    private void drawModes() {
         mc.getTextureManager().bindTexture(guiElements);
         int y = 8;
         for (int i = 0 ; i < 3 ; i++) {
             int u = gearSwapperTE.getExportMode(i) * 16;
             drawTexturedModalRect(guiLeft + 9, guiTop + y, u, 0, 16, 16);
             y += 20;
+        }
+    }
+
+    private void drawTooltips() {
+        int x = Mouse.getEventX() * width / mc.displayWidth;
+        int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
+
+        x -= guiLeft;
+        y -= guiTop;
+
+        List<String> tooltips = new ArrayList<String>();
+        if (isTopModeSlot(x, y)) {
+            tooltips.add("Priority one export inventory");
+        } else if (isMiddleModeslot(x, y)) {
+            tooltips.add("Priority two export inventory");
+        } else if (isBottomModeSlot(x, y)) {
+            tooltips.add("Priority three export inventory");
+        }
+
+        if (!tooltips.isEmpty()) {
+            drawHoveringText(tooltips, x, y, mc.fontRenderer);
         }
     }
 }
