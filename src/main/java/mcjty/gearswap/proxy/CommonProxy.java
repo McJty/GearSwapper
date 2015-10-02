@@ -7,6 +7,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import mcjty.gearswap.Config;
 import mcjty.gearswap.GearSwap;
+import mcjty.gearswap.ModCrafting;
 import mcjty.gearswap.blocks.ModBlocks;
 import mcjty.gearswap.items.ModItems;
 import mcjty.gearswap.network.PacketHandler;
@@ -22,11 +23,9 @@ public abstract class CommonProxy {
         ModItems.init();
         ModBlocks.init();
         readMainConfig();
+        ModCrafting.init();
 
         PacketHandler.registerMessages("gearswapper");
-
-//        ModCrafting.init();
-//        PacketHandler.registerMessages("gearswap");
     }
 
     private void readMainConfig() {
