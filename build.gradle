@@ -44,13 +44,13 @@ repositories {
 
 apply plugin: 'forge'
 
-version = "1.1.2"
+version = "1.0.0"
 def ENV = System.getenv()
 if (ENV.DRONE_BUILD_NUMBER) {
     version += ".n" + ENV.DRONE_BUILD_NUMBER
 }
-group= "romelo333.notenoughwands" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "notenoughwands"
+group= "mcjty.gearswap" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "gearswap"
 
 minecraft {
     version = "1.7.10-10.13.3.1395-1710ls"
