@@ -41,29 +41,26 @@ public class GearSwapperTESR extends TileEntitySpecialRenderer {
 
         GL11.glPushMatrix();
         int meta = tileEntity.getBlockMetadata();
-        float rotY = 0.0F;
-        float rotX = 0.0F;
-
-        if (meta == ForgeDirection.NORTH.ordinal()) {
-            rotY = 180.0F;
-        } else if (meta == ForgeDirection.WEST.ordinal()) {
-            rotY = 90.0F;
-        } else if (meta == ForgeDirection.EAST.ordinal()) {
-            rotY = -90.0F;
-        } else if (meta == ForgeDirection.UP.ordinal()) {
-            rotX = -90.0F;
-        } else if (meta == ForgeDirection.DOWN.ordinal()) {
-            rotX = 90.0F;
-        }
 
         GL11.glTranslatef((float) x + 0.5F, (float) y + 0.75F, (float) z + 0.5F);
 
-        if (Math.abs(rotX) < 0.001f) {
+        if (meta == ForgeDirection.UP.ordinal()) {
+            GL11.glRotatef(-90.0F, 1.0F, 0.0F, 0.0F);
+            GL11.glTranslatef(0.0F, 0.0F, -0.68F);
+        } else if (meta == ForgeDirection.DOWN.ordinal()) {
+            GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
+            GL11.glTranslatef(0.0F, 0.0F, -.184F);
+        } else {
+            float rotY = 0.0F;
+            if (meta == ForgeDirection.NORTH.ordinal()) {
+                rotY = 180.0F;
+            } else if (meta == ForgeDirection.WEST.ordinal()) {
+                rotY = 90.0F;
+            } else if (meta == ForgeDirection.EAST.ordinal()) {
+                rotY = -90.0F;
+            }
             GL11.glRotatef(-rotY, 0.0F, 1.0F, 0.0F);
             GL11.glTranslatef(0.0F, -0.2500F, -0.4375F);
-        } else {
-            GL11.glRotatef(rotX, 1.0F, 0.0F, 0.0F);
-            GL11.glTranslatef(0.0F, -0.4375F, -0.2500F);
         }
 
         GearSwapperTE gearSwapperTE = (GearSwapperTE) tileEntity;

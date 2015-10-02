@@ -74,9 +74,6 @@ public class GearSwapperBlock extends Block implements ITileEntityProvider {
             float sx = (float) (mouseOver.hitVec.xCoord - x);
             float sy = (float) (mouseOver.hitVec.yCoord - y);
             float sz = (float) (mouseOver.hitVec.zCoord - z);
-            if (sy < .13) {
-                return -1;
-            }
             return calculateHitIndex(sx, sy, sz, k);
         } else {
             return -1;
@@ -124,13 +121,12 @@ public class GearSwapperBlock extends Block implements ITileEntityProvider {
                 TileEntity tileEntity = world.getTileEntity(x, y, z);
                 if (tileEntity instanceof GearSwapperTE) {
                     GearSwapperTE gearSwapperTE = (GearSwapperTE) tileEntity;
+                    int index = calculateHitIndex(sx, sy, sz, k);
 
-                    if (sy < .13) {
+                    if (index == -1) {
                         player.openGui(GearSwap.instance, GearSwap.GUI_GEARSWAP, world, x, y, z);
                         return true;
                     }
-
-                    int index = calculateHitIndex(sx, sy, sz, k);
 
                     gearSwapperTE.restoreSetup(index, player);
                     player.addChatComponentMessage(new ChatComponentText(EnumChatFormatting.YELLOW + "Restored hotbar and armor"));
@@ -143,22 +139,42 @@ public class GearSwapperBlock extends Block implements ITileEntityProvider {
     }
 
     private static int calculateHitIndex(float sx, float sy, float sz, ForgeDirection k) {
-        int index = 0;
+        int index = -1;
         switch (k) {
             case DOWN:
+                if (sz < .13) {
+                    return -1;
+                }
+                index = (sx > .5 ? 1 : 0) + (sz < .54 ? 2 : 0);
                 break;
             case UP:
+                if (sz > 1-.13) {
+                    return -1;
+                }
+                index = (sx > .5 ? 1 : 0) + (sz > .54 ? 2 : 0);
                 break;
             case NORTH:
+                if (sy < .13) {
+                    return -1;
+                }
                 index = (sx < .5 ? 1 : 0) + (sy < .54 ? 2 : 0);
                 break;
             case SOUTH:
+                if (sy < .13) {
+                    return -1;
+                }
                 index = (sx > .5 ? 1 : 0) + (sy < .54 ? 2 : 0);
                 break;
             case WEST:
+                if (sy < .13) {
+                    return -1;
+                }
                 index = (sz > .5 ? 1 : 0) + (sy < .54 ? 2 : 0);
                 break;
             case EAST:
+                if (sy < .13) {
+                    return -1;
+                }
                 index = (sz < .5 ? 1 : 0) + (sy < .54 ? 2 : 0);
                 break;
             case UNKNOWN:
