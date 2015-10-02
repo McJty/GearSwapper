@@ -29,13 +29,15 @@ import static net.minecraftforge.common.util.ForgeDirection.DOWN;
 
 public class GearSwapperBlock extends Block implements ITileEntityProvider {
     private IIcon iconSide;
+    private String textureName;
 
-    public GearSwapperBlock() {
-        super(Material.wood);
-        setBlockName("gearSwapper");
+    public GearSwapperBlock(Material material, String textureName, String blockName) {
+        super(material);
+        this.textureName = textureName;
+        setBlockName(blockName);
         setHardness(2.0f);
         setHarvestLevel("pickaxe", 0);
-        setBlockTextureName(GearSwap.MODID + ":gearSwapper");
+        setBlockTextureName(textureName);
         setCreativeTab(CreativeTabs.tabMisc);
     }
 
@@ -97,7 +99,7 @@ public class GearSwapperBlock extends Block implements ITileEntityProvider {
     @SideOnly(Side.CLIENT)
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
-        iconSide = iconRegister.registerIcon("minecraft:planks_oak");
+        iconSide = iconRegister.registerIcon(textureName);
     }
 
     @Override

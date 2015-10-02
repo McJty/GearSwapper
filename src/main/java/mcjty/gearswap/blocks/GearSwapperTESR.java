@@ -3,6 +3,7 @@ package mcjty.gearswap.blocks;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.gearswap.GearSwap;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -35,6 +36,8 @@ public class GearSwapperTESR extends TileEntitySpecialRenderer {
         } else {
             index = -1;
         }
+
+        Block block = tileEntity.getBlockType();
 
         GL11.glPushMatrix();
         int meta = tileEntity.getBlockMetadata();
@@ -74,7 +77,7 @@ public class GearSwapperTESR extends TileEntitySpecialRenderer {
             GL11.glEnable(GL11.GL_DEPTH_TEST);
         }
 
-        renderSlotHilight(index);
+        renderSlotHilight(index, block == ModBlocks.ironGearSwapperBlock);
         renderSlots(gearSwapperTE);
 
         if (!depthTest) {
@@ -86,7 +89,7 @@ public class GearSwapperTESR extends TileEntitySpecialRenderer {
         GL11.glPopMatrix();
     }
 
-    private void renderSlotHilight(int index) {
+    private void renderSlotHilight(int index, boolean darktext) {
         GL11.glPushMatrix();
 
         GL11.glTranslatef(-0.5F, 0.5F, 0.04F);
@@ -112,7 +115,11 @@ public class GearSwapperTESR extends TileEntitySpecialRenderer {
         factor = 1.0f;
         GL11.glScalef(f3 * factor, -f3 * factor, f3);
         FontRenderer fontrenderer = this.func_147498_b();
-        fontrenderer.drawString("Settings...", 10, 120, index == -1 ? 0xffffffff : 0xff888888);
+        if (darktext) {
+            fontrenderer.drawString("Settings...", 10, 120, index == -1 ? 0xff000000 : 0xff666666);
+        } else {
+            fontrenderer.drawString("Settings...", 10, 120, index == -1 ? 0xffffffff : 0xff888888);
+        }
 
         GL11.glPopMatrix();
     }

@@ -8,6 +8,11 @@ import net.minecraft.item.ItemStack;
 
 public class ModCrafting {
     public static void init() {
-        GameRegistry.addRecipe(new ItemStack(ModBlocks.gearSwapperBlock), "pCp", "pcp", "ppp", 'p', Blocks.planks, 'C', Items.comparator, 'c', Blocks.chest);
+        ItemStack lapisStack = new ItemStack(Items.dye, 1, 4);
+
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.woodenGearSwapperBlock), "pCp", "pcp", "ppp", 'p', Blocks.planks, 'C', Items.comparator, 'c', Blocks.chest);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.ironGearSwapperBlock), "pCp", "pcp", "ppp", 'p', Items.iron_ingot, 'C', Items.comparator, 'c', Blocks.chest);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.lapisGearSwapperBlock), "pCp", "pcp", "ppp", 'p', lapisStack, 'C', Items.comparator, 'c', Blocks.chest);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.stoneGearSwapperBlock), "pCp", "pcp", "ppp", 'p', Blocks.stone, 'C', Items.comparator, 'c', Blocks.chest);
     }
 }
