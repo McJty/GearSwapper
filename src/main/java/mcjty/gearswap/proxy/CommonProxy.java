@@ -20,9 +20,10 @@ public abstract class CommonProxy {
 
     public void preInit(FMLPreInitializationEvent e) {
         mainConfig = GearSwap.config;
+        readMainConfig();
+
         ModItems.init();
         ModBlocks.init();
-        readMainConfig();
         ModCrafting.init();
 
         PacketHandler.registerMessages("gearswapper");
