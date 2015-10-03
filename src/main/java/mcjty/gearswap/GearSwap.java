@@ -1,5 +1,6 @@
 package mcjty.gearswap;
 
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -13,6 +14,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.config.Configuration;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
@@ -36,6 +38,9 @@ public class GearSwap {
     public static Configuration config;
 
     public static int GUI_GEARSWAP = 0;
+
+    public static boolean baubles = false;
+
 
     /**
      * Run before anything else. Read your config, create blocks, items, etc, and
@@ -66,5 +71,11 @@ public class GearSwap {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         proxy.postInit(e);
+
+        baubles = Loader.isModLoaded("Baubles");
+        if (baubles) {
+            logger.log(Level.INFO, "Gear Swapper Detected Baubles: enabling support");
+        }
+
     }
 }

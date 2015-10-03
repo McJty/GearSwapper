@@ -1,5 +1,7 @@
 package mcjty.gearswap.blocks;
 
+import baubles.api.BaublesApi;
+import mcjty.gearswap.GearSwap;
 import mcjty.gearswap.items.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -10,16 +12,20 @@ import net.minecraft.item.ItemStack;
 public class GearSwapperContainer extends Container {
     private IInventory playerInventory;
     private GearSwapperTE gearInventory;
+    private IInventory baublesInventory;
 
     public GearSwapperContainer(EntityPlayer player, GearSwapperTE gearSwapperTE) {
         playerInventory = player.inventory;
         gearInventory = gearSwapperTE;
+        if (GearSwap.baubles) {
+            baublesInventory = BaublesApi.getBaubles(player);
+        }
 
         int index = 0;
-        addSlotToContainer(new GhostSlot(gearInventory, index++, 46, 6));
-        addSlotToContainer(new GhostSlot(gearInventory, index++, 64, 45));
-        addSlotToContainer(new GhostSlot(gearInventory, index++, 46, 102));
-        addSlotToContainer(new GhostSlot(gearInventory, index++, 64, 141));
+        addSlotToContainer(new GhostSlot(gearInventory, index++, 48, 6));
+        addSlotToContainer(new GhostSlot(gearInventory, index++, 66, 45));
+        addSlotToContainer(new GhostSlot(gearInventory, index++, 48, 102));
+        addSlotToContainer(new GhostSlot(gearInventory, index++, 66, 141));
 
         for (int i = 0 ; i < 4 ; i++) {
             int x = 87;
@@ -55,6 +61,14 @@ public class GearSwapperContainer extends Container {
         // Armor slots
         for (int i = 0 ; i < 4 ; i++) {
             addSlotToContainer(new Slot(playerInventory, index++, 10, 141 - i*18));
+        }
+
+        // Baubles
+        if (baublesInventory != null) {
+            index = 0;
+            for (int i = 0 ; i < 4 ; i++) {
+                addSlotToContainer(new Slot(baublesInventory, index++, 28, 87 + i * 18));
+            }
         }
     }
 
