@@ -295,6 +295,10 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
     private ItemStack findBestMatchingStack(ItemStack desired, ItemStack[] currentStacks, InventoryPlayer inventoryPlayer) {
         ItemStack bestSoFar = null;
         desired = desired.copy();
+        // Correct for 0 stackSize which seems to be needed in some cases.
+        if (desired.stackSize == 0) {
+            desired.stackSize = 1;
+        }
         while (true) {
             final ItemStack finalBestSoFar = bestSoFar;
             ItemStack bestMatch = findBestMatchingStackWithMatcher(desired, currentStacks, inventoryPlayer, new ItemMatcher() {
