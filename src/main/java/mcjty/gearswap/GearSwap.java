@@ -74,7 +74,12 @@ public class GearSwap {
 
         baubles = Loader.isModLoaded("Baubles");
         if (baubles) {
-            logger.log(Level.INFO, "Gear Swapper Detected Baubles: enabling support");
+            if (Config.supportBaubles) {
+                logger.log(Level.INFO, "Gear Swapper Detected Baubles: enabling support");
+            } else {
+                logger.log(Level.INFO, "Gear Swapper Detected Baubles but it is disabled in config anyway: disabling support");
+                baubles = false;
+            }
         }
 
     }

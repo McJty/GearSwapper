@@ -47,5 +47,4 @@ public class Tools {
     public static IInventory getBaubles(EntityPlayer player) {
         return GearSwap.baubles ? BaublesApi.getBaubles(player) : null;
     }
-
 }

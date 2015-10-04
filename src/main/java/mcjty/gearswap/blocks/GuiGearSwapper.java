@@ -64,6 +64,10 @@ public class GuiGearSwapper extends GuiContainer {
         PacketHandler.INSTANCE.sendToServer(new PacketToggleMode(gearSwapperTE.xCoord, gearSwapperTE.yCoord, gearSwapperTE.zCoord, i));
     }
 
+    private void filledRect(int x1, int y1, int x2, int y2, int color) {
+        drawRect(guiLeft+x1, guiTop+y1, guiLeft+x2, guiTop+y2, color);
+    }
+
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int ii, int i2) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -72,6 +76,15 @@ public class GuiGearSwapper extends GuiContainer {
 
         drawModes();
         drawTooltips();
+
+        // If needed hide the bauble slots
+        if (!GearSwap.baubles) {
+            filledRect(27, 86, 27 + 18, 86 + 18 * 4, 0xffc6c6c6);
+            filledRect(86, 5, 86 + 18 * 4, 5 + 18, 0xffc6c6c6);
+            filledRect(86, 5 + 39, 86 + 18 * 4, 5 + 39 + 18, 0xffc6c6c6);
+            filledRect(86, 5 + 39 * 2, 86 + 18 * 4, 5 + 39 * 2 + 18, 0xffc6c6c6);
+            filledRect(86, 5+39*3, 86+18*4, 5+39*3+18, 0xffc6c6c6);
+        }
     }
 
     private void drawModes() {
