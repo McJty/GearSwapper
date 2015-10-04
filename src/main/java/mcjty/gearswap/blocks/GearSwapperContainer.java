@@ -1,8 +1,8 @@
 package mcjty.gearswap.blocks;
 
-import baubles.api.BaublesApi;
-import mcjty.gearswap.GearSwap;
 import mcjty.gearswap.items.ModItems;
+import mcjty.gearswap.varia.ShadowInventory;
+import mcjty.gearswap.varia.Tools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -17,8 +17,10 @@ public class GearSwapperContainer extends Container {
     public GearSwapperContainer(EntityPlayer player, GearSwapperTE gearSwapperTE) {
         playerInventory = player.inventory;
         gearInventory = gearSwapperTE;
-        if (GearSwap.baubles) {
-            baublesInventory = BaublesApi.getBaubles(player);
+
+        baublesInventory = Tools.getBaubles(player);
+        if (baublesInventory != null && Tools.WhoAmI.whoAmI(player.worldObj) == Tools.WhoAmI.SPCLIENT) {
+            baublesInventory = new ShadowInventory(baublesInventory);
         }
 
         int index = 0;
@@ -67,7 +69,12 @@ public class GearSwapperContainer extends Container {
         if (baublesInventory != null) {
             index = 0;
             for (int i = 0 ; i < 4 ; i++) {
-                addSlotToContainer(new Slot(baublesInventory, index++, 28, 87 + i * 18));
+                addSlotToContainer(new Slot(baublesInventory, index++, 28, 87 + i * 18) {
+                    @Override
+                    public boolean isItemValid(ItemStack stack) {
+                        return inventory.isItemValidForSlot(getSlotIndex(), stack);
+                    }
+                });
             }
         }
     }
