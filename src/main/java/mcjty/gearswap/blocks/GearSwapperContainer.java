@@ -49,6 +49,18 @@ public class GearSwapperContainer extends Container {
             }
         }
 
+        // The optional baubles ghost slots:
+        if (baublesInventory != null) {
+            for (int i = 0 ; i < 4 ; i++) {
+                int x = 87;
+                int y = 6 + i * 39;
+                for (int a = 0 ; a < 4 ; a++) {
+                    addSlotToContainer(new GhostSlot(gearInventory, index++, x, y));
+                    x += 18;
+                }
+            }
+        }
+
         index = 0;
         // Hotbar slots
         for (int i = 0 ; i < 9 ; i++) {
@@ -123,7 +135,7 @@ public class GearSwapperContainer extends Container {
     @Override
     public ItemStack slotClick(int index, int button, int mode, EntityPlayer player) {
         if (gearInventory.isGhostSlot(index)) {
-            Slot slot = getSlot(index);
+            Slot slot = getSlot(index);     // Index of slot matches index in gear inventory!
             if (slot.getHasStack()) {
                 slot.putStack(null);
             } else if (!gearInventory.isIconSlot(index) && player.inventory.getItemStack() == null) {
