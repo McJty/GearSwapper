@@ -25,6 +25,19 @@ public class Config {
         if (rulesCategory.isEmpty()) {
             // Now configured rules. Add defaults.
             cfg.get(CATEGORY_RULES, "item.extrautils:golden_bag", new String[] { "display" });
+            cfg.get(CATEGORY_RULES, "item.InfiTool.Pickaxe", new String[] { "display" });
+            cfg.get(CATEGORY_RULES, "item.InfiTool.Hammer", new String[] { "display" });
+            cfg.get(CATEGORY_RULES, "item.InfiTool.Cleaver", new String[] { "display" });
+            cfg.get(CATEGORY_RULES, "item.InfiTool.LumberAxe", new String[] { "display" });
+            cfg.get(CATEGORY_RULES, "item.InfiTool.Rapier", new String[] { "display" });
+            cfg.get(CATEGORY_RULES, "item.InfiTool.Broadsword", new String[] { "display" });
+            cfg.get(CATEGORY_RULES, "item.InfiTool.Longsword", new String[] { "display" });
+            cfg.get(CATEGORY_RULES, "item.InfiTool.FryPan", new String[] { "display" });
+            cfg.get(CATEGORY_RULES, "item.InfiTool.Chisel", new String[] { "display" });
+            cfg.get(CATEGORY_RULES, "item.InfiTool.Cutlass", new String[] { "display" });
+            cfg.get(CATEGORY_RULES, "item.InfiTool.Scythe", new String[] { "display" });
+            cfg.get(CATEGORY_RULES, "item.InfiTool.Battleaxe", new String[] { "display" });
+            cfg.get(CATEGORY_RULES, "item.InfiTool", new String[] { "display" });
         }
         for (Map.Entry<String, Property> entry : rulesCategory.getValues().entrySet()) {
             String unlocItemName = entry.getKey();
