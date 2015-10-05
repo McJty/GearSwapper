@@ -54,11 +54,9 @@ public class ItemInfoCommand implements ICommand {
         }
 
         Item item = heldItem.getItem();
-        if (item instanceof ItemBlock) {
-            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + "Block: " + heldItem.getDisplayName() + " (#" + heldItem.stackSize + ", " + heldItem.getItemDamage() + ")"));
-        } else {
-            sender.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + "Item: " + heldItem.getDisplayName() + " (#" + heldItem.stackSize + ", " + heldItem.getItemDamage() + ")"));
-        }
+        sender.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + (item instanceof ItemBlock ? "Block: " : "Item: ")
+                + heldItem.getDisplayName() + "/" + item.getUnlocalizedName()
+                + " (#" + heldItem.stackSize + ", " + heldItem.getItemDamage() + ")"));
 
         NBTTagCompound tagCompound = heldItem.getTagCompound();
         if (tagCompound != null) {
