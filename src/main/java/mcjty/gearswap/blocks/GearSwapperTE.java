@@ -299,128 +299,92 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
         if (desired.stackSize == 0) {
             desired.stackSize = 1;
         }
-        while (true) {
-            final ItemStack finalBestSoFar = bestSoFar;
-            ItemStack bestMatch = findBestMatchingStackWithMatcher(desired, currentStacks, inventoryPlayer, new ItemMatcher() {
-                @Override
-                public boolean match(ItemStack desired, ItemStack current) {
-                    if (finalBestSoFar != null && current != null) {
-                        if (!ItemStack.areItemStackTagsEqual(finalBestSoFar, current)) {
-                            return false;
-                        }
-                    }
-                    return current != null && current.isItemEqual(desired);
-                }
-            });
-            if (bestMatch == null) {
-                bestMatch = findBestMatchingStackWithMatcher(desired, currentStacks, inventoryPlayer, new ItemMatcher() {
-                    @Override
-                    public boolean match(ItemStack desired, ItemStack current) {
-                        if (finalBestSoFar != null && current != null) {
-                            if (!ItemStack.areItemStackTagsEqual(finalBestSoFar, current)) {
-                                return false;
-                            }
-                        }
-                        return current != null && current.getItem() == desired.getItem();
-                    }
-                });
-            }
-            if (bestMatch == null) {
+
+        while (desired.stackSize > 0) {
+            ItemStack stack = findBestMatchingStackWithScore(desired, currentStacks, inventoryPlayer, bestSoFar);
+            if (stack == null) {
                 return bestSoFar;
             }
-
             if (bestSoFar == null) {
-                bestSoFar = bestMatch;
-                desired.stackSize -= bestMatch.stackSize;
+                bestSoFar = stack;
             } else {
-                bestSoFar.stackSize += bestMatch.stackSize;
-                desired.stackSize -= bestMatch.stackSize;
+                bestSoFar.stackSize += stack.stackSize;
             }
+            desired.stackSize -= stack.stackSize;
+        }
+        return bestSoFar;
+    }
 
-            if (desired.stackSize <= 0) {
-                return bestSoFar;
+    private class BestScore {
+        public int score = -1;
+        public Source source = null;
+        public int index = -1;
+    }
+
+    /**
+     * Find the best matching item. If 'bestMatch' is already given then we already found one before and so we
+     * now need an exact match for remaining items.
+     * @param desired
+     * @param source
+     * @param bestScore
+     * @param bestMatch
+     */
+    private void findBestMatchingStackWithScore(ItemStack desired, Source source, BestScore bestScore, ItemStack bestMatch) {
+        for (int i = 0 ; i < source.getStackCount() ; i++) {
+            ItemStack current = source.getStack(i);
+            if (bestMatch != null && current != null) {
+                if (!bestMatch.isItemEqual(current)) {
+                    continue;
+                }
+                if (!ItemStack.areItemStackTagsEqual(bestMatch, current)) {
+                    continue;
+                }
+            }
+            int score = calculateMatchingScore(desired, current);
+            if (score > bestScore.score) {
+                bestScore.score = score;
+                bestScore.source = source;
+                bestScore.index = i;
             }
         }
     }
 
-    private ItemStack findBestMatchingStackWithMatcher(ItemStack desired, ItemStack[] currentStacks, InventoryPlayer inventoryPlayer, ItemMatcher matcher) {
-        for (int i = 0 ; i < currentStacks.length ; i++) {
-            ItemStack current = currentStacks[i];
-            if (matcher.match(desired, current)) {
-                if (desired.stackSize < current.stackSize) {
-                    current = current.copy();
-                    currentStacks[i].stackSize -= desired.stackSize;
-                    current.stackSize = desired.stackSize;
-                } else {
-                    currentStacks[i] = null;
-                }
-                return current;
-            }
-        }
-
-        // We don't look in the armor or hotbar because we don't want to remove something
-        // there that we just placed.
-        for (int i = 9 ; i < 9*4 ; i++) {
-            ItemStack current = inventoryPlayer.getStackInSlot(i);
-            if (matcher.match(desired, current)) {
-                if (desired.stackSize < current.stackSize) {
-                    current = inventoryPlayer.decrStackSize(i, desired.stackSize);
-                } else {
-                    inventoryPlayer.setInventorySlotContents(i, null);
-                }
-
-                return current;
-            }
-        }
-
-        // Check our own internal inventory.
-        for (int i = SLOT_BUFFER ; i < SLOT_BUFFER + 16 ; i++) {
-            ItemStack current = getStackInSlot(i);
-            if (matcher.match(desired, current)) {
-                if (desired.stackSize < current.stackSize) {
-                    current = decrStackSize(i, desired.stackSize);
-                } else {
-                    setInventorySlotContents(i, null);
-                }
-
-                return current;
-            }
-        }
+    private ItemStack findBestMatchingStackWithScore(final ItemStack desired, final ItemStack[] currentStacks, final InventoryPlayer inventoryPlayer, ItemStack bestMatch) {
+        final BestScore bestScore = new BestScore();
+        findBestMatchingStackWithScore(desired, new OriginalStackSource(currentStacks), bestScore, bestMatch);
+        findBestMatchingStackWithScore(desired, new PlayerSource(inventoryPlayer), bestScore, bestMatch);
+        findBestMatchingStackWithScore(desired, new InternalSource(this), bestScore, bestMatch);
 
         // Check external inventories.
-        for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+        for (final ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
             TileEntity te = worldObj.getTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
             if (te instanceof IInventory) {
-                IInventory otherInventory = (IInventory) te;
-                ISidedInventory sidedInventory = null;
-                if (otherInventory instanceof ISidedInventory) {
-                    sidedInventory = (ISidedInventory) otherInventory;
-                }
-                for (int i = 0; i < otherInventory.getSizeInventory(); i++) {
-                    ItemStack current = otherInventory.getStackInSlot(i);
-                    boolean ok = false;
-                    if (matcher.match(desired, current)) {
-                        if (sidedInventory != null) {
-                            if (sidedInventory.canExtractItem(i, current, direction.getOpposite().ordinal())) {
-                                ok = true;
-                            }
-                        } else {
-                            ok = true;
-                        }
-                    }
-                    if (ok) {
-                        if (desired.stackSize < current.stackSize) {
-                            current = otherInventory.decrStackSize(i, desired.stackSize);
-                        } else {
-                            otherInventory.setInventorySlotContents(i, null);
-                        }
-                        return current;
-                    }
-                }
+                findBestMatchingStackWithScore(desired, new ExternalInventorySource((IInventory) te, direction), bestScore, bestMatch);
             }
         }
 
+        if (bestScore.source != null) {
+            return bestScore.source.extractAmount(bestScore.index, desired.stackSize);
+        }
         return null;
+    }
+
+
+
+    private int calculateMatchingScore(ItemStack desired, ItemStack current) {
+        if (current == null) {
+            return -1;
+        }
+        if (ItemStack.areItemStackTagsEqual(desired, current) && desired.isItemEqual(current)) {
+            return 1000;
+        }
+        if (desired.isItemEqual(current)) {
+            return 500;
+        }
+        if (desired.getItem().equals(current.getItem())) {
+            return 200;
+        }
+        return -1;
     }
 
 
@@ -582,9 +546,4 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
     public boolean canInsertItem(int index, ItemStack stack, int side) {
         return index >= SLOT_BUFFER;
     }
-
-    private interface ItemMatcher {
-        boolean match(ItemStack desired, ItemStack current);
-    }
-
 }
