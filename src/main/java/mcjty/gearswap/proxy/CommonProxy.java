@@ -34,6 +34,7 @@ public abstract class CommonProxy {
         try {
             cfg.load();
             cfg.addCustomCategoryComment(Config.CATEGORY_GEARSWAP, "General configuration");
+            cfg.addCustomCategoryComment(Config.CATEGORY_RULES, "Rules that help decide if two items are considered equal. Every rule contains a list of tags that have to match");
             Config.init(cfg);
         } catch (Exception e1) {
             GearSwap.logger.log(Level.ERROR, "Problem loading config file!", e1);
