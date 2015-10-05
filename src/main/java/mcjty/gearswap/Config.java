@@ -36,6 +36,8 @@ public class Config {
             cfg.get(CATEGORY_RULES, "item.InfiTool.Chisel", new String[] { "display" });
             cfg.get(CATEGORY_RULES, "item.InfiTool.Cutlass", new String[] { "display" });
             cfg.get(CATEGORY_RULES, "item.InfiTool.Scythe", new String[] { "display" });
+            cfg.get(CATEGORY_RULES, "item.InfiTool.Dagger", new String[] { "display" });
+            cfg.get(CATEGORY_RULES, "item.InfiTool.Battlesign", new String[] { "display" });
             cfg.get(CATEGORY_RULES, "item.InfiTool.Battleaxe", new String[] { "display" });
             cfg.get(CATEGORY_RULES, "item.InfiTool", new String[] { "display" });
         }
