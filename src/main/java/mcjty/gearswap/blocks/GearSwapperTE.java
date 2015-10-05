@@ -1,5 +1,6 @@
 package mcjty.gearswap.blocks;
 
+import mcjty.gearswap.Config;
 import mcjty.gearswap.GearSwap;
 import mcjty.gearswap.items.ModItems;
 import mcjty.gearswap.varia.InventoryHelper;
@@ -10,6 +11,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
@@ -375,16 +377,50 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
         if (current == null) {
             return -1;
         }
+
         if (ItemStack.areItemStackTagsEqual(desired, current) && desired.isItemEqual(current)) {
             return 1000;
         }
+
+        if (desired.getItem().equals(current.getItem()) && desired.getTagCompound() != null && current.getTagCompound() != null) {
+            if (itemsMatchForSpecificTags(desired, current)) {
+                return 700;
+            }
+        }
+
         if (desired.isItemEqual(current)) {
             return 500;
         }
+
         if (desired.getItem().equals(current.getItem())) {
             return 200;
         }
         return -1;
+    }
+
+    private boolean itemsMatchForSpecificTags(ItemStack desired, ItemStack current) {
+        if (Config.tagsThatHaveToMatch.containsKey(desired.getUnlocalizedName())) {
+            String[] tags = Config.tagsThatHaveToMatch.get(desired.getUnlocalizedName());
+            boolean ok = true;
+            for (String tag : tags) {
+                NBTBase tag1 = desired.getTagCompound().getTag(tag);
+                NBTBase tag2 = current.getTagCompound().getTag(tag);
+                if (tag1 == null && tag2 != null) {
+                    ok = false;
+                    break;
+                } else if (tag1 != null && tag2 == null) {
+                    ok = false;
+                    break;
+                } else if (tag1 != null && !tag1.equals(tag2)) {
+                    ok = false;
+                    break;
+                }
+            }
+            if (ok) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
