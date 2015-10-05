@@ -3,6 +3,8 @@ package mcjty.gearswap.blocks;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mcjty.gearswap.GearSwap;
+import mcjty.gearswap.network.PacketHandler;
+import mcjty.gearswap.network.PacketRememberSetup;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -101,17 +103,15 @@ public class GearSwapperBlock extends Block implements ITileEntityProvider {
 
     @Override
     public void onBlockClicked(World world, int x, int y, int z, EntityPlayer player) {
-        if (!world.isRemote && player.isSneaking()) {
+        if (world.isRemote && player.isSneaking()) {
+            // On client. We find out what part of the block was hit and send that to the server.
             MovingObjectPosition mouseOver = Minecraft.getMinecraft().objectMouseOver;
             int index = getSlot(mouseOver, world);
             if (index >= 0) {
-                GearSwapperTE gearSwapperTE = (GearSwapperTE) world.getTileEntity(x, y, z);
-                gearSwapperTE.rememberSetup(index, player);
-                player.addChatComponentMessage(new ChatComponentText(EnumChatFormatting.YELLOW + "Remembered current hotbar and armor"));
+                PacketHandler.INSTANCE.sendToServer(new PacketRememberSetup(x, y, z, index));
             }
         }
     }
-
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float sx, float sy, float sz) {

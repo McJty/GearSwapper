@@ -17,5 +17,6 @@ public class PacketHandler {
 
         // Server side
         INSTANCE.registerMessage(PacketToggleMode.class, PacketToggleMode.class, nextID(), Side.SERVER);
+        INSTANCE.registerMessage(PacketRememberSetup.class, PacketRememberSetup.class, nextID(), Side.SERVER);
     }
 }
