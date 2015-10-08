@@ -29,6 +29,8 @@ public class GearSwapperTESR extends TileEntitySpecialRenderer {
 
     @Override
     public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f) {
+        GL11.glPushAttrib(GL11.GL_CURRENT_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_ENABLE_BIT | GL11.GL_LIGHTING_BIT | GL11.GL_TEXTURE_BIT);
+
         MovingObjectPosition mouseOver = Minecraft.getMinecraft().objectMouseOver;
         int index;
         if (mouseOver != null && mouseOver.blockX == tileEntity.xCoord && mouseOver.blockY == tileEntity.yCoord && mouseOver.blockZ == tileEntity.zCoord) {
@@ -68,21 +70,16 @@ public class GearSwapperTESR extends TileEntitySpecialRenderer {
         GL11.glTranslatef(0.0F, 0.0F, 0.9F);
 
         GL11.glDepthMask(true);
-
-        boolean depthTest = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
-        if (!depthTest) {
-            GL11.glEnable(GL11.GL_DEPTH_TEST);
-        }
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
 
         renderSlotHilight(index, block == ModBlocks.ironGearSwapperBlock);
         renderSlots(gearSwapperTE);
 
-        if (!depthTest) {
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-        }
-        RenderHelper.disableStandardItemLighting();
+//        RenderHelper.disableStandardItemLighting();
 
         GL11.glPopMatrix();
+
+        GL11.glPopAttrib();
     }
 
     private void renderSlotHilight(int index, boolean darktext) {
