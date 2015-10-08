@@ -75,7 +75,6 @@ public class GuiGearSwapper extends GuiContainer {
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, WIDTH, HEIGHT);
 
         drawModes();
-        drawTooltips();
 
         // If needed hide the bauble slots
         if (!GearSwap.baubles) {
@@ -85,6 +84,8 @@ public class GuiGearSwapper extends GuiContainer {
             filledRect(86, 5 + 39 * 2, 86 + 18 * 4, 5 + 39 * 2 + 18, 0xffc6c6c6);
             filledRect(86, 5+39*3, 86+18*4, 5+39*3+18, 0xffc6c6c6);
         }
+
+        drawTooltips();
     }
 
     private void drawModes() {
@@ -114,6 +115,8 @@ public class GuiGearSwapper extends GuiContainer {
         }
 
         if (!tooltips.isEmpty()) {
+            x += guiLeft;
+            y += guiTop;
             drawHoveringText(tooltips, x, y, mc.fontRenderer);
         }
     }
