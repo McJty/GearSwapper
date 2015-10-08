@@ -453,7 +453,7 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
     }
 
     public boolean isGhostSlot(int index) {
-        return (index >= 0 && index < SLOT_BUFFER) || (index >= SLOT_BAUBLES && index < SLOT_BAUBLES+16);
+        return (index >= 0 && index < SLOT_BUFFER) || (GearSwap.baubles && index >= SLOT_BAUBLES && index < SLOT_BAUBLES+16);
     }
 
     public boolean isIconSlot(int index) {
