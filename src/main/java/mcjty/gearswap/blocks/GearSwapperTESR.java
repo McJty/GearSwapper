@@ -80,7 +80,6 @@ public class GearSwapperTESR extends TileEntitySpecialRenderer {
         if (!depthTest) {
             GL11.glDisable(GL11.GL_DEPTH_TEST);
         }
-        GL11.glDepthMask(true);
         RenderHelper.disableStandardItemLighting();
 
         GL11.glPopMatrix();
@@ -93,8 +92,6 @@ public class GearSwapperTESR extends TileEntitySpecialRenderer {
         float factor = 2.0f;
         float f3 = 0.0075F;
         GL11.glScalef(f3 * factor, -f3 * factor, f3);
-        GL11.glNormal3f(0.0F, 0.0F, -1.0F);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glDisable(GL11.GL_LIGHTING);
 
         for (int i = 0 ; i < 4 ; i++) {
@@ -123,7 +120,6 @@ public class GearSwapperTESR extends TileEntitySpecialRenderer {
 
     private void renderSlots(GearSwapperTE gearSwapperTE) {
         RenderHelper.enableGUIStandardItemLighting();
-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
         float factor = 2.0f;
         float f3 = 0.0075F;
