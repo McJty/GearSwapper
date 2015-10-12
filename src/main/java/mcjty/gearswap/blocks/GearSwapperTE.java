@@ -187,8 +187,7 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
 
         // Find stacks in all possible sources to replace the current selection
         for (int i = 0 ; i < getPlayerInventorySize() ; i++) {
-            int internalInventoryIndex = getInternalInventoryIndex(index, i);
-            ItemStack desiredStack = getStackInSlot(internalInventoryIndex);
+            ItemStack desiredStack = getStackInSlot(getInternalInventoryIndex(index, i));
             if (desiredStack == null || desiredStack.getItem() == ModItems.forceEmptyItem) {
                 // Either we don't have specific needs for this slot or we want it to be cleared.
                 // In both cases we keep the slot empty here.
