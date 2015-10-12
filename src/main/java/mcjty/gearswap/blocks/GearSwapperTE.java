@@ -182,6 +182,9 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
         ItemStack[] currentStacks = new ItemStack[getPlayerInventorySize()];
         for (int i = 0 ; i < getPlayerInventorySize() ; i++) {
             currentStacks[i] = getStackFromPlayerInventory(i, player);
+            if (currentStacks[i] != null) {
+                System.out.println(i + ": Set aside stack:" + currentStacks[i]);
+            }
             putStackInPlayerInventory(i, player, null);
         }
 
@@ -191,8 +194,14 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
             if (desiredStack == null || desiredStack.getItem() == ModItems.forceEmptyItem) {
                 // Either we don't have specific needs for this slot or we want it to be cleared.
                 // In both cases we keep the slot empty here.
+                if (desiredStack == null) {
+                    System.out.println(i + ": No desired stack for this slot");
+                } else {
+                    System.out.println(i + ": Slot should be cleared");
+                }
             } else {
                 ItemStack foundStack = findBestMatchingStack(desiredStack, currentStacks, inventory);
+                System.out.println(i + ": We want stack: " + desiredStack + ", and we found: " + foundStack + " (put in hotbar)");
                 // Can be that we didn't find anything. In any case, we simply put whatever we found in the slot.
                 putStackInPlayerInventory(i, player, foundStack);
             }
@@ -209,12 +218,19 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
                     ItemStack desiredStack = getStackInSlot(internalInventoryIndex);
                     // First check if we don't want to force the slot to be empty
                     if (desiredStack == null || desiredStack.getItem() != ModItems.forceEmptyItem) {
+                        if (desiredStack == null) {
+                            System.out.println(i + ": No specific wish for this slot. Just restore what was there before");
+                        } else {
+                            System.out.println(i + ": We had a wish but didn't find it and we don't want to force this slot as empty. Restore what was there before");
+                        }
                         putStackInPlayerInventory(i, player, currentStacks[i]);
                         currentStacks[i] = null;
                     } else {
+                        System.out.println(i + ": We want to force this slot as empty");
                         putStackInPlayerInventory(i, player, new ItemStack(ModItems.forceEmptyItem));
                     }
                 } else {
+                    System.out.println(i + ": Item is empty and there was nothing here before. Force as empty");
                     putStackInPlayerInventory(i, player, new ItemStack(ModItems.forceEmptyItem));
                 }
             }
