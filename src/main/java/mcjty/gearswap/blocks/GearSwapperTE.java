@@ -182,7 +182,7 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
         ItemStack[] currentStacks = new ItemStack[getPlayerInventorySize()];
         for (int i = 0 ; i < getPlayerInventorySize() ; i++) {
             currentStacks[i] = getStackFromPlayerInventory(i, player);
-            putStackInPlayerInventory(i, player, null);
+            putStackInPlayerInventory(i, player, new ItemStack(ModItems.forceEmptyItem));
         }
 
         // Find stacks in all possible sources to replace the current selection
@@ -204,18 +204,14 @@ public class GearSwapperTE extends TileEntity implements ISidedInventory {
         for (int i = 0 ; i < getPlayerInventorySize() ; i++) {
             ItemStack stack = getStackFromPlayerInventory(i, player);
             if (stack == null) {
-                if (currentStacks[i] != null) {
+                if (currentStacks[i] != null && currentStacks[i].getItem() != ModItems.forceEmptyItem) {
                     int internalInventoryIndex = getInternalInventoryIndex(index, i);
                     ItemStack desiredStack = getStackInSlot(internalInventoryIndex);
                     // First check if we don't want to force the slot to be empty
                     if (desiredStack == null || desiredStack.getItem() != ModItems.forceEmptyItem) {
                         putStackInPlayerInventory(i, player, currentStacks[i]);
                         currentStacks[i] = null;
-                    } else {
-                        putStackInPlayerInventory(i, player, new ItemStack(ModItems.forceEmptyItem));
                     }
-                } else {
-                    putStackInPlayerInventory(i, player, new ItemStack(ModItems.forceEmptyItem));
                 }
             }
         }
