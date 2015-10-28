@@ -24,7 +24,7 @@ class OriginalStackSource implements Source {
         ItemStack current = currentStacks[index];
         if (amount < current.stackSize) {
             current = current.copy();
-            current.stackSize -= amount;
+            currentStacks[index].stackSize -= amount;
             current.stackSize = amount;
         } else {
             currentStacks[index] = null;
