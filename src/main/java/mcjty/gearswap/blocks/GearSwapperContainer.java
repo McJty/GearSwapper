@@ -141,7 +141,10 @@ public class GearSwapperContainer extends Container {
             } else if (!gearInventory.isIconSlot(index) && player.inventory.getItemStack() == null) {
                 slot.putStack(new ItemStack(ModItems.forceEmptyItem));
                 return null;
+            } else {
+                slot.putStack(player.inventory.getItemStack());
             }
+            return null;
         }
         return super.slotClick(index, button, mode, player);
     }
