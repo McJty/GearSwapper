@@ -24,21 +24,21 @@ public class GearSwapperContainer extends Container {
         }
 
         int index = 0;
-        addSlotToContainer(new GhostSlot(gearInventory, index++, 48, 6));
-        addSlotToContainer(new GhostSlot(gearInventory, index++, 66, 45));
-        addSlotToContainer(new GhostSlot(gearInventory, index++, 48, 102));
-        addSlotToContainer(new GhostSlot(gearInventory, index++, 66, 141));
+        addSlotToContainer(new GhostSlot(gearInventory, index++, 48, 6, GhostSlot.ANY));
+        addSlotToContainer(new GhostSlot(gearInventory, index++, 66, 45, GhostSlot.ANY));
+        addSlotToContainer(new GhostSlot(gearInventory, index++, 48, 102, GhostSlot.ANY));
+        addSlotToContainer(new GhostSlot(gearInventory, index++, 66, 141, GhostSlot.ANY));
 
         for (int i = 0 ; i < 4 ; i++) {
             int x = 87;
             int y = 24 + i * 39;
             for (int h = 0 ; h < 9 ; h++) {
-                addSlotToContainer(new GhostSlot(gearInventory, index++, x, y));
+                addSlotToContainer(new GhostSlot(gearInventory, index++, x, y, GhostSlot.ANY));
                 x += 18;
             }
             x = 177;
             for (int a = 0 ; a < 4 ; a++) {
-                addSlotToContainer(new GhostSlot(gearInventory, index++, x, y-18));
+                addSlotToContainer(new GhostSlot(gearInventory, index++, x, y-18, GhostSlot.ARMOR_BOOTS - a));
                 x += 18;
             }
         }
@@ -54,10 +54,10 @@ public class GearSwapperContainer extends Container {
             for (int i = 0 ; i < 4 ; i++) {
                 int x = 87;
                 int y = 6 + i * 39;
-                for (int a = 0 ; a < 4 ; a++) {
-                    addSlotToContainer(new GhostSlot(gearInventory, index++, x, y));
-                    x += 18;
-                }
+                addSlotToContainer(new GhostSlot(gearInventory, index++, x, y, GhostSlot.BAUBLE_AMULET)); x += 18;
+                addSlotToContainer(new GhostSlot(gearInventory, index++, x, y, GhostSlot.BAUBLE_RING)); x += 18;
+                addSlotToContainer(new GhostSlot(gearInventory, index++, x, y, GhostSlot.BAUBLE_RING)); x += 18;
+                addSlotToContainer(new GhostSlot(gearInventory, index++, x, y, GhostSlot.BAUBLE_BELT)); x += 18;
             }
         }
 
