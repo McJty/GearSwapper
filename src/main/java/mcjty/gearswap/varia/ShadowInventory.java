@@ -1,6 +1,5 @@
 package mcjty.gearswap.varia;
 
-import codechicken.lib.inventory.InventoryUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -34,12 +33,39 @@ public class ShadowInventory implements IInventory {
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        return InventoryUtils.decrStackSize(this, index, amount);
+        return decrStackSize(this, index, amount);
     }
+
+    public static ItemStack decrStackSize(IInventory inv, int slot, int size) {
+        ItemStack item = inv.getStackInSlot(slot);
+        if(item != null) {
+            if(item.stackSize <= size) {
+                inv.setInventorySlotContents(slot, null);
+                inv.markDirty();
+                return item;
+            } else {
+                ItemStack itemstack1 = item.splitStack(size);
+                if(item.stackSize == 0) {
+                    inv.setInventorySlotContents(slot, null);
+                } else {
+                    inv.setInventorySlotContents(slot, item);
+                }
+
+                inv.markDirty();
+                return itemstack1;
+            }
+        } else {
+            return null;
+        }
+    }
+
+
 
     @Override
     public ItemStack getStackInSlotOnClosing(int index) {
-        return InventoryUtils.getStackInSlotOnClosing(this, index);
+        ItemStack stack = getStackInSlot(index);
+        setInventorySlotContents(index, (ItemStack) null);
+        return stack;
     }
 
     @Override
